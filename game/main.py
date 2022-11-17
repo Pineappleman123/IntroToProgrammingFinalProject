@@ -51,9 +51,10 @@ bullet_img = pg.image.load(path.join(img_dir1, "laserRed16.png")).convert()
 boss_img = pg.image.load(path.join(img_dir1, "enemyBlue2.png")).convert()
 
 player_bullets = 0
+snake_segments = []
 
 class Snake_Segment(Sprite):
-    def __init__(self):
+    def __init__(self, type, index, x, y):
         Sprite.__init__(self)
         self.image = pg.Surface((25, 25))
         self.image = player_img
@@ -63,58 +64,65 @@ class Snake_Segment(Sprite):
         self.pos = vec(WIDTH/2, HEIGHT-10)
         self.speed = SNAKE_SPEED
         self.direction = "right"
+        self.type = type
+        self.index = index
+        self.x = x
+        self.y = y
     def controls(self):
         keys = pg.key.get_pressed()
-        # new movement direction
-        if keys[pg.K_LEFT]:
-            if self.direction != "left":
-                self.direction = "left"
+        if type == "head":
+            # new movement direction
+            if keys[pg.K_LEFT]:
+                if self.direction != "left":
+                    self.direction = "left"
+                    if FRAME % SNAKE_SPEED == 0:
+                        self.rect.x -= 5
+                else:
+                    if FRAME % SNAKE_SPEED == 0:
+                        self.rect.x -= 5
+                    pass
+            if keys[pg.K_RIGHT]:
+                if self.direction != "right":
+                    self.direction = "right"
+                    if FRAME % SNAKE_SPEED == 0:
+                        self.rect.x += 5
+                else:
+                    if FRAME % SNAKE_SPEED == 0:
+                        self.rect.x += 5
+                    pass
+            if keys[pg.K_UP]:
+                if self.direction != "up":
+                    self.direction = "up"
+                    if FRAME % SNAKE_SPEED == 0:
+                        self.rect.y -= 5
+                else:
+                    if FRAME % SNAKE_SPEED == 0:
+                        self.rect.y -= 5
+                    pass
+            if keys[pg.K_DOWN]:
+                if self.direction != "down":
+                    self.direction = "down"
+                    if FRAME % SNAKE_SPEED == 0:
+                        self.rect.y += 5
+                else:
+                    if FRAME % SNAKE_SPEED == 0:
+                        self.rect.y += 5
+                    pass
+            # if direction is already set
+            if keys[pg.K_LEFT]:
                 if FRAME % SNAKE_SPEED == 0:
                     self.rect.x -= 5
-            else:
+            if keys[pg.K_RIGHT]:           
                 if FRAME % SNAKE_SPEED == 0:
-                    self.rect.x -= 5
-                pass
-        if keys[pg.K_RIGHT]:
-            if self.direction != "right":
-                self.direction = "right"
+                    self.rect.x += 5           
+            if keys[pg.K_UP]:           
                 if FRAME % SNAKE_SPEED == 0:
-                    self.rect.x += 5
-            else:
-                if FRAME % SNAKE_SPEED == 0:
-                    self.rect.x += 5
-                pass
-        if keys[pg.K_UP]:
-            if self.direction != "up":
-                self.direction = "up"
-                if FRAME % SNAKE_SPEED == 0:
-                    self.rect.y -= 5
-            else:
-                if FRAME % SNAKE_SPEED == 0:
-                    self.rect.y -= 5
-                pass
-        if keys[pg.K_DOWN]:
-            if self.direction != "down":
-                self.direction = "down"
+                    self.rect.y -= 5           
+            if keys[pg.K_DOWN]:           
                 if FRAME % SNAKE_SPEED == 0:
                     self.rect.y += 5
-            else:
-                if FRAME % SNAKE_SPEED == 0:
-                    self.rect.y += 5
-                pass
-        # if direction is already set
-        if keys[pg.K_LEFT]:
-            if FRAME % SNAKE_SPEED == 0:
-                self.rect.x -= 5
-        if keys[pg.K_RIGHT]:           
-            if FRAME % SNAKE_SPEED == 0:
-                self.rect.x += 5           
-        if keys[pg.K_UP]:           
-            if FRAME % SNAKE_SPEED == 0:
-                self.rect.y -= 5           
-        if keys[pg.K_DOWN]:           
-            if FRAME % SNAKE_SPEED == 0:
-                self.rect.y += 5
+        if type == "body":
+            self.direction = snake_segments[self.index - 1].direction
             
 
 
@@ -437,6 +445,8 @@ while running:
             running = False
         # if event.type == pg.KEYDOWN:
         #     if event.key == 
+    
+    
     
     # when to spawn boss and where to spawn it
     # if FRAME % BOSS_SPAWN == 0:
