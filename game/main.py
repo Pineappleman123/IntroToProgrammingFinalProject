@@ -56,8 +56,7 @@ snake_segments = []
 class Snake_Segment(Sprite):
     def __init__(self, type, index, x, y):
         Sprite.__init__(self)
-        self.image = pg.Surface((25, 25))
-        self.image = player_img
+        self.image = pg.Surface((10, 10))
         self.image.fill(GREEN)
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH/2, HEIGHT/2)
@@ -76,53 +75,55 @@ class Snake_Segment(Sprite):
                 if self.direction != "left":
                     self.direction = "left"
                     if FRAME % SNAKE_SPEED == 0:
-                        self.rect.x -= 5
+                        self.rect.x -= 10
                 else:
                     if FRAME % SNAKE_SPEED == 0:
-                        self.rect.x -= 5
+                        self.rect.x -= 10
                     pass
             if keys[pg.K_RIGHT]:
                 if self.direction != "right":
                     self.direction = "right"
                     if FRAME % SNAKE_SPEED == 0:
-                        self.rect.x += 5
+                        self.rect.x += 10
                 else:
                     if FRAME % SNAKE_SPEED == 0:
-                        self.rect.x += 5
+                        self.rect.x += 10
                     pass
             if keys[pg.K_UP]:
                 if self.direction != "up":
                     self.direction = "up"
                     if FRAME % SNAKE_SPEED == 0:
-                        self.rect.y -= 5
+                        self.rect.y -= 10
                 else:
                     if FRAME % SNAKE_SPEED == 0:
-                        self.rect.y -= 5
+                        self.rect.y -= 10
                     pass
             if keys[pg.K_DOWN]:
                 if self.direction != "down":
                     self.direction = "down"
                     if FRAME % SNAKE_SPEED == 0:
-                        self.rect.y += 5
+                        self.rect.y += 10
                 else:
                     if FRAME % SNAKE_SPEED == 0:
-                        self.rect.y += 5
+                        self.rect.y += 10
                     pass
             # if direction is already set
             if keys[pg.K_LEFT]:
                 if FRAME % SNAKE_SPEED == 0:
-                    self.rect.x -= 5
+                    self.rect.x -= 10
             if keys[pg.K_RIGHT]:           
                 if FRAME % SNAKE_SPEED == 0:
-                    self.rect.x += 5           
+                    self.rect.x += 10           
             if keys[pg.K_UP]:           
                 if FRAME % SNAKE_SPEED == 0:
-                    self.rect.y -= 5           
+                    self.rect.y -= 10           
             if keys[pg.K_DOWN]:           
                 if FRAME % SNAKE_SPEED == 0:
-                    self.rect.y += 5
+                    self.rect.y += 10
         if type == "body":
             self.direction = snake_segments[self.index - 1].direction
+    def update(self):
+        self.controls()
             
 
 
@@ -395,6 +396,7 @@ players = pg.sprite.Group()
 enemies = pg.sprite.Group()
 bullets = pg.sprite.Group()
 bosses = pg.sprite.Group()
+snake = pg.sprite.Group()
 
 # # instantiate the player class
 # player = Player()
@@ -446,8 +448,9 @@ while running:
         # if event.type == pg.KEYDOWN:
         #     if event.key == 
     
-    
-    
+    snake_head = Snake_Segment("head", 0, WIDTH/2, HEIGHT/2)
+    all_sprites.add(snake_head)
+    snake.add(snake_head)
     # when to spawn boss and where to spawn it
     # if FRAME % BOSS_SPAWN == 0:
     #     cooldown = random.randint(120, BOSS_FIRERATE)
@@ -464,6 +467,7 @@ while running:
     #     bosses.add(e)
     
     
+    
     ############ Update ##############
     # update all sprites
     all_sprites.update()
@@ -471,7 +475,7 @@ while running:
     ############ Draw ################
     # draw the background screen
     screen.fill(BLACK)
-    screen.blit(background, background_rect)
+    # screen.blit(background, background_rect)
     # draw all sprites
     all_sprites.draw(screen)
     
