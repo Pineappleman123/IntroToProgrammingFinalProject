@@ -53,13 +53,15 @@ boss_img = pg.image.load(path.join(img_dir1, "enemyBlue2.png")).convert()
 player_bullets = 0
 snake_segments = []
 
+count = 1
+
 class Snake_Segment(Sprite):
     def __init__(self, type, index, x, y):
         Sprite.__init__(self)
         self.image = pg.Surface((20, 20))
         self.image.fill(GREEN)
         self.rect = self.image.get_rect()
-        self.rect.center = (WIDTH/2, HEIGHT/2)
+        self.rect.center = (x, y)
         self.pos = vec(WIDTH/2, HEIGHT-10)
         self.speed = SNAKE_SPEED
         self.direction = "right"
@@ -69,6 +71,7 @@ class Snake_Segment(Sprite):
         self.y = y
     def controls(self):
         keys = pg.key.get_pressed()
+        global count
         if self.type == "head":
             # new movement direction
             if keys[pg.K_LEFT]:
@@ -106,8 +109,12 @@ class Snake_Segment(Sprite):
                 # else:
                 #     if FRAME % SNAKE_SPEED == 0:
                 #         self.rect.y += 10
-        if type == "body":
-            self.direction = snake_segments[self.index - 1].direction
+        if self.type == "body":
+            if FRAME % SNAKE_SPEED == 0:
+                if count % 2 == 0:
+                    self.direction = snake_segments[self.index - 1].direction
+                count += 1
+
     def update(self):
         self.controls()
         # if direction is already set
@@ -434,6 +441,15 @@ snake = pg.sprite.Group()
 snake_head = Snake_Segment("head", 0, WIDTH/2, HEIGHT/2)
 all_sprites.add(snake_head)
 snake.add(snake_head)
+snake_segments.append(snake_head)
+
+index = 1
+for segment in range(5):
+    segment = Snake_Segment("body", index, (snake_segments[index - 1].rect.x - 20 + 10), (snake_segments[index - 1].rect.y) + 10)
+    all_sprites.add(segment)
+    snake.add(segment)
+    snake_segments.append(segment)
+    index += 1
 
 # win = False
 # Game loop
