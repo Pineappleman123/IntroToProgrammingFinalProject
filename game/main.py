@@ -1,5 +1,7 @@
+### Citations ###
 # some content from kids can code: http://kidscancode.org/blog/ (collision, movement, sprites)
 # sprites from https://opengameart.org/content/space-shooter-redux
+# my dad helped with some movement logic and helped fix movement bugs
 '''
 My final project is the snake game
 '''
@@ -62,7 +64,6 @@ class Snake_Segment(Sprite):
         self.image.fill(GREEN)
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        self.pos = vec(WIDTH/2, HEIGHT-10)
         self.speed = SNAKE_SPEED
         self.direction = "right"
         self.type = type
@@ -165,6 +166,21 @@ class Snake_Segment(Sprite):
                 self.rect.y += 20
         
         
+class Apple(Sprite):
+    def __init__(self, x, y):
+        Sprite.__init__(self)
+        self.image = pg.Surface((20, 20))
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        
+    def update(self):
+        global SCORE
+        hits = pg.sprite.spritecollide(self, snake, False)
+        if hits:
+            SCORE += 1
+            self.kill()
+
             
 
 
@@ -433,10 +449,7 @@ class Snake_Segment(Sprite):
 
 # create a group for all sprites
 all_sprites = pg.sprite.Group()
-players = pg.sprite.Group()
-enemies = pg.sprite.Group()
-bullets = pg.sprite.Group()
-bosses = pg.sprite.Group()
+apples = pg.sprite.Group()
 snake = pg.sprite.Group()
 
 # # instantiate the player class
@@ -517,7 +530,12 @@ while running:
     #     enemy_list.append(e)
     #     bosses.add(e)
     
-    
+    if len(apples) == 0:
+        x = random.randint(0, WIDTH)
+        y = random.randint(0, HEIGHT)
+        apple = Apple(x, y)
+        apples.add(apple)
+        all_sprites.add(apple)
     
     ############ Update ##############
     # update all sprites
