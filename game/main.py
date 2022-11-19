@@ -54,6 +54,7 @@ boss_img = pg.image.load(path.join(img_dir1, "enemyBlue2.png")).convert()
 
 player_bullets = 0
 snake_segments = []
+index = 1
 
 count = 1
 direction = 0
@@ -175,9 +176,14 @@ class Apple(Sprite):
         self.rect.center = (x, y)
         
     def update(self):
-        global SCORE
+        global SCORE, index
         hits = pg.sprite.spritecollide(self, snake, False)
         if hits:
+            segment = Snake_Segment("body", index, (snake_segments[index - 1].rect.x - 20 + 10), (snake_segments[index - 1].rect.y) + 10)
+            all_sprites.add(segment)
+            snake.add(segment)
+            snake_segments.append(segment)
+            index += 1
             SCORE += 1
             self.kill()
 
@@ -490,13 +496,9 @@ all_sprites.add(snake_head)
 snake.add(snake_head)
 snake_segments.append(snake_head)
 
-index = 1
-for segment in range(20):
-    segment = Snake_Segment("body", index, (snake_segments[index - 1].rect.x - 20 + 10), (snake_segments[index - 1].rect.y) + 10)
-    all_sprites.add(segment)
-    snake.add(segment)
-    snake_segments.append(segment)
-    index += 1
+
+
+    
 
 # win = False
 # Game loop
