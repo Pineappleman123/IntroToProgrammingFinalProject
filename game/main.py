@@ -54,7 +54,7 @@ player_bullets = 0
 snake_segments = []
 
 count = 1
-
+direction = 0
 class Snake_Segment(Sprite):
     def __init__(self, type, index, x, y):
         Sprite.__init__(self)
@@ -67,69 +67,103 @@ class Snake_Segment(Sprite):
         self.direction = "right"
         self.type = type
         self.index = index
+        self.next_direction = ""
+        self.change_direction = False
+        self.no_update = False
         self.x = x
         self.y = y
     def controls(self):
+        global direction
         keys = pg.key.get_pressed()
-        global count
+        if keys[pg.K_LEFT]:
+            direction = 1
+        if keys[pg.K_RIGHT]:
+            direction = 2
+        if keys[pg.K_UP]:
+            direction = 3
+        if keys[pg.K_DOWN]:
+            direction = 4
+        
+        
+        # if self.no_update == False:
         if self.type == "head":
             # new movement direction
-            if keys[pg.K_LEFT]:
-                # if self.direction != "left":
-                self.direction = "left"
-                    # if FRAME % SNAKE_SPEED == 0:
-                    #     self.rect.x -= 10
-                # else:
-                #     if FRAME % SNAKE_SPEED == 0:
-                #         self.rect.x -= 10
-                    
-            if keys[pg.K_RIGHT]:
-                # if self.direction != "right":
-                self.direction = "right"
-                #     if FRAME % SNAKE_SPEED == 0:
-                #         self.rect.x += 10
-                # else:
-                #     if FRAME % SNAKE_SPEED == 0:
-                #         self.rect.x += 10
-                    
-            if keys[pg.K_UP]:
-                # if self.direction != "up":
-                self.direction = "up"
-                #     if FRAME % SNAKE_SPEED == 0:
-                #         self.rect.y -= 10
-                # else:
-                #     if FRAME % SNAKE_SPEED == 0:
-                #         self.rect.y -= 10
-                    
-            if keys[pg.K_DOWN]:
-                # if self.direction != "down":
-                self.direction = "down"
-                #     if FRAME % SNAKE_SPEED == 0:
-                #         self.rect.y += 10
-                # else:
-                #     if FRAME % SNAKE_SPEED == 0:
-                #         self.rect.y += 10
-        if self.type == "body":
             if FRAME % SNAKE_SPEED == 0:
-                if count % 2 == 0:
-                    self.direction = snake_segments[self.index - 1].direction
-                count += 1
+                if direction == 1:
+                    # if self.direction != "left":
+                    if self.direction != "right":
+                        self.direction = "left"
+                    # count = 1
+                        # if FRAME % SNAKE_SPEED == 0:
+                        #     self.rect.x -= 10
+                    # else:
+                    #     if FRAME % SNAKE_SPEED == 0:
+                    #         self.rect.x -= 10
+                        
+                if direction == 2:
+                    # if self.direction != "right":
+                    if self.direction != "left":
+                        self.direction = "right"
+                    # count = 1
+                    #     if FRAME % SNAKE_SPEED == 0:
+                    #         self.rect.x += 10
+                    # else:
+                    #     if FRAME % SNAKE_SPEED == 0:
+                    #         self.rect.x += 10
+                        
+                if direction == 3:
+                    # if self.direction != "up":
+                    if self.direction != "down":
+                        self.direction = "up"
+                    # count = 1
+                    #     if FRAME % SNAKE_SPEED == 0:
+                    #         self.rect.y -= 10
+                    # else:
+                    #     if FRAME % SNAKE_SPEED == 0:
+                    #         self.rect.y -= 10
+                        
+                if direction == 4:
+                    # if self.direction != "down":
+                    if self.direction != "up":
+                        self.direction = "down"
+                    # count = 1
+                    #     if FRAME % SNAKE_SPEED == 0:
+                    #         self.rect.y += 10
+                    # else:
+                    #     if FRAME % SNAKE_SPEED == 0:
+                    #         self.rect.y += 10
+                # self.no_update = True
+        # else:
+        #     if FRAME % SNAKE_SPEED == 0:
+        #         self.no_update == False
+        #         keys = pg.K_SPACE
+        #         # count += 1
+                
+
+            
 
     def update(self):
         self.controls()
         # if direction is already set
-        if self.direction == "left":
-            if FRAME % SNAKE_SPEED == 0:
+        if FRAME % SNAKE_SPEED == 0:
+            if self.type == "body":
+                if self.change_direction == True:
+                    self.direction = snake_segments[self.index - 1].direction
+                    self.direction = self.next_direction
+                    self.change_direction = False
+                # elif self.direction != snake_segments[self.index - 1].direction:
+                if self.direction != snake_segments[self.index - 1].direction:
+                    self.next_direction = snake_segments[self.index - 1].direction
+                    self.change_direction = True
+            if self.direction == "left":                
                 self.rect.x -= 20
-        if self.direction == "right":           
-            if FRAME % SNAKE_SPEED == 0:
+            if self.direction == "right":                           
                 self.rect.x += 20           
-        if self.direction == "up":           
-            if FRAME % SNAKE_SPEED == 0:
+            if self.direction == "up":                           
                 self.rect.y -= 20           
-        if self.direction == "down":           
-            if FRAME % SNAKE_SPEED == 0:
+            if self.direction == "down":                           
                 self.rect.y += 20
+        
         
             
 
@@ -444,7 +478,7 @@ snake.add(snake_head)
 snake_segments.append(snake_head)
 
 index = 1
-for segment in range(5):
+for segment in range(20):
     segment = Snake_Segment("body", index, (snake_segments[index - 1].rect.x - 20 + 10), (snake_segments[index - 1].rect.y) + 10)
     all_sprites.add(segment)
     snake.add(segment)
@@ -464,6 +498,7 @@ while running:
         # check for closed window
         if event.type == pg.QUIT:
             running = False
+            
         # if event.type == pg.KEYDOWN:
         #     if event.key == 
     
@@ -486,7 +521,11 @@ while running:
     
     ############ Update ##############
     # update all sprites
+    # for segment in snake_segments:
+    #     segment.update()
     all_sprites.update()
+    # if FRAME % SNAKE_SPEED == 0:
+    #     count += 1
     
 
     ############ Draw ################
