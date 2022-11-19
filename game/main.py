@@ -145,6 +145,7 @@ class Snake_Segment(Sprite):
             
 
     def update(self):
+        global LIVES
         self.controls()
         # if direction is already set
         if FRAME % SNAKE_SPEED == 0:
@@ -166,6 +167,16 @@ class Snake_Segment(Sprite):
             if self.direction == "down":                           
                 self.rect.y += 20
         
+        if self.rect.x < 0:
+            self.rect.x = WIDTH - 20
+        elif self.rect.x > WIDTH:
+            self.rect.x = 0
+        elif self.rect.y < 0:
+            self.rect.y = HEIGHT - 20
+        elif self.rect.y > HEIGHT:
+            self.rect.y = 0
+        
+        
         
 class Apple(Sprite):
     def __init__(self, x, y):
@@ -179,11 +190,12 @@ class Apple(Sprite):
         global SCORE, index
         hits = pg.sprite.spritecollide(self, snake, False)
         if hits:
-            segment = Snake_Segment("body", index, (snake_segments[index - 1].rect.x - 20 + 10), (snake_segments[index - 1].rect.y) + 10)
-            all_sprites.add(segment)
-            snake.add(segment)
-            snake_segments.append(segment)
-            index += 1
+            for i in range(LENGTH_PER_APPLE):
+                segment = Snake_Segment("body", index, (snake_segments[index - 1].rect.x - 20 + 10), (snake_segments[index - 1].rect.y) + 10)
+                all_sprites.add(segment)
+                snake.add(segment)
+                snake_segments.append(segment)
+                index += 1
             SCORE += 1
             self.kill()
 
@@ -491,7 +503,7 @@ snake = pg.sprite.Group()
 # # add player to all sprites group
 # all_sprites.add(player)
 
-snake_head = Snake_Segment("head", 0, WIDTH/2, HEIGHT/2)
+snake_head = Snake_Segment("head", 0, WIDTH/2 + 10, HEIGHT/2 + 10)
 all_sprites.add(snake_head)
 snake.add(snake_head)
 snake_segments.append(snake_head)
@@ -503,7 +515,7 @@ snake_segments.append(snake_head)
 # win = False
 # Game loop
 running = True
-# gameover = False
+gameover = False
 while running:
     # keep the loop running using clock
     clock.tick(FPS)
@@ -538,12 +550,17 @@ while running:
         apple = Apple(x, y)
         apples.add(apple)
         all_sprites.add(apple)
+        
+    hits = pg.sprite.spritecollide(snake_head, snake, False)
+    if len(hits) == 2:
+        LIVES -= 1
     
     ############ Update ##############
     # update all sprites
     # for segment in snake_segments:
     #     segment.update()
-    all_sprites.update()
+    if gameover == False:
+        all_sprites.update()
     # if FRAME % SNAKE_SPEED == 0:
     #     count += 1
     
@@ -608,6 +625,7 @@ while running:
     # check if you lose
     if LIVES <= 0:    
         draw_text("GAME OVER", 144, RED, WIDTH / 2, HEIGHT / 2)
+        gameover = True
 
     # buffer - after drawing everything, flip display
     pg.display.flip()
