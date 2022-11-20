@@ -59,14 +59,14 @@ index = 1
 count = 1
 direction = 0
 class Snake_Segment(Sprite):
-    def __init__(self, type, index, x, y):
+    def __init__(self, type, index, x, y, direction):
         Sprite.__init__(self)
         self.image = pg.Surface((20, 20))
         self.image.fill(GREEN)
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.speed = SNAKE_SPEED
-        self.direction = "right"
+        self.direction = direction
         self.type = type
         self.index = index
         self.next_direction = ""
@@ -177,7 +177,8 @@ class Snake_Segment(Sprite):
             self.rect.y = 0
         
         
-        
+spawnx = 0 
+spawny = 0      
 class Apple(Sprite):
     def __init__(self, x, y):
         Sprite.__init__(self)
@@ -187,282 +188,30 @@ class Apple(Sprite):
         self.rect.center = (x, y)
         
     def update(self):
-        global SCORE, index
+        global SCORE, index, spawnx, spawny
         hits = pg.sprite.spritecollide(self, snake, False)
         if hits:
             for i in range(LENGTH_PER_APPLE):
-                segment = Snake_Segment("body", index, (snake_segments[index - 1].rect.x - 20 + 10), (snake_segments[index - 1].rect.y) + 10)
+                if snake_segments[len(snake_segments) - 1].direction == "left":
+                    spawnx = 20
+                if snake_segments[len(snake_segments) - 1].direction == "right":
+                    spawnx = -20
+                if snake_segments[len(snake_segments) - 1].direction == "up":
+                    spawny = 20
+                if snake_segments[len(snake_segments) - 1].direction == "down":
+                    spawny = -20
+                print(spawnx, ",", spawny)
+                segment = Snake_Segment("body", index, (snake_segments[index - 1].rect.center[0] + spawnx), (snake_segments[index - 1].rect.center[1]) + spawny, snake_segments[len(snake_segments) - 1].direction)
                 all_sprites.add(segment)
                 snake.add(segment)
                 snake_segments.append(segment)
                 index += 1
+                spawnx = 0 
+                spawny = 0
             SCORE += 1
             self.kill()
 
             
-
-
-# player class
-# class Player(Sprite):
-#     def __init__(self):
-#         # defines player sprite parameters
-#         Sprite.__init__(self)
-#         self.image = pg.Surface((50, 38))
-#         self.image = player_img
-#         self.image.fill(BLACK)
-#         self.image = pg.transform.scale(player_img, (50, 38))
-#         self.image.set_colorkey(BLACK)
-#         self.rect = self.image.get_rect()
-#         self.rect.center = (WIDTH/2, HEIGHT/2)
-#         self.pos = vec(WIDTH/2, HEIGHT-10)
-#         self.vel = vec(0,0)
-#         self.acc = vec(0,0)
-#     # what happens when a key gets pressed: horizontal movement and shooting
-#     def controls(self):
-#         global player_bullets
-#         keys = pg.key.get_pressed()
-#         if keys[pg.K_LEFT]:
-#             self.acc.x = -2.5
-#             # print(self.vel)
-#         if keys[pg.K_RIGHT]:
-#             self.acc.x = 2.5
-#         # times the bullet shooting
-#         if keys[pg.K_SPACE]:
-#             if FRAME % PLAYER_FIRERATE == 0:
-#                 for i in range(PIERCE):    
-#                     self.shoot()
-#                     # player_bullets += 1
-#         if keys[pg.K_a]:
-#             if FRAME % 1 == 0:
-#                 for i in range(AIMBOT_DELAY):
-#                     self.aimbot()
-#                     # player_bullets += 1
-#         if keys[pg.K_d]:
-#             if FRAME % 5 == 0:
-#                 for i in range(1):
-#                     self.home()
-#                     # player_bullets += 1
-        
-#     # shoot function creates a bullet at player coordinates
-#     def shoot(self):
-#         global player_bullets
-#         x = self.rect.x + 25
-#         y = self.rect.y - 10
-#         w = int(PLAYER_FIRERATE)/2
-#         h = int(w)*3
-#         movey = -5
-#         movex = 0
-#         e = Bullet(x, y, RED, w, h, movex, movey, "player")
-#         all_sprites.add(e)
-#         bullets.add(e)
-#         player_bullets += 1
-#     # homing bullet that follows enemy
-#     def home(self):
-#         global player_bullets
-#         x = self.rect.x + 25
-#         y = self.rect.y - 10
-#         w = 15
-#         h = 15
-#         movey = -5
-#         movex = 0
-#         e = Bullet(x, y, RED, w, h, movex, movey, "aimbot")
-#         all_sprites.add(e)
-#         bullets.add(e)
-#         player_bullets += 1
-#     # bullet aimed directly at random enemy
-#     def aimbot(self):
-#         global enemy_list, player_bullets
-#         try:
-#             x = self.rect.x + 25
-#             y = self.rect.y + 15
-#             w = 5
-#             h = 5
-#             enemy = random.randint(0,len(enemy_list)-1)
-#             movey = ((enemy_list[enemy].rect.y + enemy_list[enemy].h/2) - self.rect.y - 19)/60
-#             movex = ((enemy_list[enemy].rect.x + enemy_list[enemy].w/2) - self.rect.x - 25)/60
-#             e = Bullet(x, y, RED, w, h, movex, movey, "player")
-#             all_sprites.add(e)
-#             bullets.add(e)
-#             player_bullets += 1
-#         except:
-#             pass
-#     # updating all movement and acceleration and gravity
-#     def update(self):
-#         self.acc = vec(0, 0)
-#         self.controls()
-#         self.acc.x += self.vel.x * -0.3
-#         self.acc.y += self.vel.y * -0.1
-#         self.vel += self.acc
-#         self.pos += self.vel + 0.5 * self.acc
-#         self.rect.midbottom = self.pos
-    
-# # enemy class        
-# class Enemy(Sprite):
-#     # initialize enemy class
-#     def __init__(self, x, y, color, w, h, movex, movey, cooldown, hp):
-#         Sprite.__init__(self)
-#         self.x = x
-#         self.y = y
-#         self.color = color
-#         self.w = w
-#         self.h = h
-#         self.image = pg.Surface((self.w, self.h))
-#         self.image = enemy_img
-#         self.image = pg.transform.scale(enemy_img, (30, 22))
-#         self.image.set_colorkey(BLACK)
-#         self.rect = self.image.get_rect()
-#         self.rect.center = (self.x, self.y)
-#         self.pos = vec(self.x, self.y)
-#         self.vel = vec(0,0)
-#         self.acc = vec(0,0)
-#         self.movex = movex
-#         self.movey = movey
-#         self.cooldown = cooldown
-#         self.hp = hp
-#     # updates movement at a set interval and shoots
-#     def update(self):
-#         self.rect.x += self.movex 
-#         if FRAME % 30 == 0:
-#             self.rect.y += self.movey
-#         if FRAME % random.randint(120, self.cooldown) == 0:
-#             x = self.rect.x + 15
-#             y = self.rect.y + 50
-#             movey = 5
-#             movex = 0  
-#             e = Bullet(x, y, RED, 5, 15, movex, movey, "enemy")
-#             all_sprites.add(e)
-#             bullets.add(e)
-#         # if self.hp <= 0:
-#         #     self.kill()
-
-# # bullet class
-# class Bullet(Sprite):
-#     def __init__(self, x, y, color, w, h, movex, movey, side):
-#         Sprite.__init__(self)
-#         self.x = x
-#         self.y = y
-#         self.color = color
-#         self.w = w
-#         self.h = h
-#         self.image = pg.Surface((self.w, self.h))
-#         self.image = bullet_img
-#         self.image = pg.transform.scale(bullet_img, (w, h))
-#         self.image.set_colorkey(BLACK)
-#         self.rect = self.image.get_rect()
-#         self.rect.center = (self.x, self.y)
-#         self.pos = vec(self.x, self.y)
-#         self.movey = movey
-#         self.movex = movex
-#         self.side = side
-#         self.timer = 0
-#     def aimbot(self):
-#         try:
-#             if self.side == "aimbot":
-#                 # x = self.rect.x + 25
-#                 # y = self.rect.y + 15
-#                 self.w = 15
-#                 self.h = 15
-#                 enemy = (len(enemy_list)-1)
-#                 self.movey = ((enemy_list[enemy].rect.y + 11) - self.rect.y)/5
-#                 self.movex = ((enemy_list[enemy].rect.x + 15) - self.rect.x)/5
-#                 # e = Bullet(x, y, RED, w, h, movex, movey, "player")
-#                 # all_sprites.add(e)
-#                 # bullets.add(e)
-#         except:
-#             pass
-#     # collisions of bullet with enemy/player/boss and movement
-#     def update(self):
-#         global SCORE, LIVES, BOSS_HP, player_bullets
-#         keys = pg.key.get_pressed()
-#         if keys[pg.K_s]:
-#             self.aimbot()
-#         self.rect.y += self.movey
-#         self.rect.x += self.movex
-#         # end of game confetti
-#         if self.side == "confetti":
-#             pass
-#         # for homing bullets
-#         if self.side == "aimbot":
-#             hits = pg.sprite.spritecollide(self, enemies, True)
-#             if hits:
-#                 SCORE += 1
-#                 enemy_list.remove(hits[0])
-#                 # self.kill()
-#                 hits[0].hp -= 1
-#             hits1 = pg.sprite.spritecollide(self, bosses, False)
-#             if hits1:
-#                 SCORE += 5 
-#                 hits1[0].hp -= 1
-#                 # self.kill()
-#         # player bullets
-#         if self.side == "player":
-#             hits = pg.sprite.spritecollide(self, enemies, True)
-#             if hits:
-#                 SCORE += 1
-#                 enemy_list.remove(hits[0])
-#                 self.kill()
-#                 hits[0].hp -= 1
-#                 player_bullets -= 1
-#             hits1 = pg.sprite.spritecollide(self, bosses, False)
-#             if hits1:
-#                 SCORE += 5 
-#                 hits1[0].hp -= 1
-#                 self.kill()
-#                 player_bullets -= 1
-#         # enemy bullets
-#         if self.side == "enemy":
-#             hits = pg.sprite.spritecollide(self, players, False)
-#             if hits:
-#                 LIVES -= 1
-#                 self.kill()
-#         # kill bullet after timer ends to conserve memory
-#         if self.timer >= 150:
-#             self.kill()
-#             if self.side == "player":
-#                 player_bullets -= 1
-#             elif self.side == "aimbot":
-#                 player_bullets -= 1
-#             else:
-#                 pass
-#         self.timer += 1
-
-# # boss class
-# class Boss(Sprite):
-#     def __init__(self, x, y, color, w, h, movex, movey, cooldown, damage):
-#         Sprite.__init__(self)
-#         self.x = x
-#         self.y = y
-#         self.color = color
-#         self.w = w
-#         self.h = h
-#         self.image = pg.Surface((self.w, self.h))
-#         self.image = boss_img
-#         self.image = pg.transform.scale(boss_img, (60, 30))
-#         self.image.set_colorkey(BLACK)
-#         self.rect = self.image.get_rect()
-#         self.rect.center = (self.x, self.y)
-#         self.pos = vec(self.x, self.y)
-#         self.movey = movey
-#         self.movex = movex
-#         self.hp = BOSS_HP
-#         self.cooldown = cooldown
-#         self.damage = damage
-#     # move boss and shooting function and health counter
-#     def update(self):
-#         if FRAME % 5 == 0:
-#             self.rect.x += self.movex
-#         if FRAME % random.randint(120, self.cooldown) == 0:
-#             for i in range(self.damage):
-#                 x = self.rect.x + 30
-#                 y = self.rect.y + 50
-#                 movey = 5
-#                 movex = 0
-#                 e = Bullet(x, y, RED, 10, 30, movex, movey, "enemy")
-#                 all_sprites.add(e)
-#                 bullets.add(e)
-#         if self.hp <= 0:
-#             enemy_list.remove(self)
-#             self.kill()
 
 
 # create a group for all sprites
@@ -470,40 +219,9 @@ all_sprites = pg.sprite.Group()
 apples = pg.sprite.Group()
 snake = pg.sprite.Group()
 
-# # instantiate the player class
-# player = Player()
-# players.add(player)
-
-# count = 1
-
-# # spacing for enemies
-# spacingx = WIDTH/20
-# spacingy = HEIGHT/30
 
 
-# # enemy_list = []
-# # # spawns enemies in with correct spacing based off of screen dimensions
-# # for i in range((ROWS*19)):
-# #     cooldown = random.randint(120, ENEMY_FIRERATE)
-# #     x = spacingx
-# #     y = spacingy
-# #     movey = 5
-# #     movex = 0
-# #     e = Enemy(x, y, RED, 30, 22, movex, movey, cooldown, ENEMY_HP)
-# #     all_sprites.add(e)
-# #     enemies.add(e)
-# #     enemy_list.append(e)
-# #     # print(e)
-# #     spacingx += WIDTH/20
-# #     if count % 19 == 0:
-# #         spacingy += HEIGHT/15
-# #         spacingx = WIDTH/20  
-# #     count += 1
-
-# # add player to all sprites group
-# all_sprites.add(player)
-
-snake_head = Snake_Segment("head", 0, WIDTH/2 + 10, HEIGHT/2 + 10)
+snake_head = Snake_Segment("head", 0, WIDTH/2 + 10, HEIGHT/2 + 10, "right")
 all_sprites.add(snake_head)
 snake.add(snake_head)
 snake_segments.append(snake_head)
@@ -516,6 +234,7 @@ snake_segments.append(snake_head)
 # Game loop
 running = True
 gameover = False
+press = 1
 while running:
     # keep the loop running using clock
     clock.tick(FPS)
@@ -527,22 +246,15 @@ while running:
             running = False
             
         # if event.type == pg.KEYDOWN:
-        #     if event.key == 
+        #     if press % 2 == 0:
+        #         if event.key == pg.K_p:
+        #             gameover == True
+        #     else:
+        #         gameover == False
+        #     press += 1
+
+                
     
-    # when to spawn boss and where to spawn it
-    # if FRAME % BOSS_SPAWN == 0:
-    #     cooldown = random.randint(120, BOSS_FIRERATE)
-    #     x = random.choice([-5, (WIDTH + 5)])
-    #     y = 50
-    #     movey = 0
-    #     if x < 0:
-    #         movex = 5
-    #     else:
-    #         movex = -5
-    #     e = Boss(x, y, BLUE, 60, 30, movex, movey, cooldown, BOSS_DAMAGE)
-    #     all_sprites.add(e)
-    #     enemy_list.append(e)
-    #     bosses.add(e)
     
     if len(apples) == 0:
         x = random.randint(0, WIDTH)
@@ -576,51 +288,6 @@ while running:
     draw_text("POINTS: " + str(SCORE), 22, WHITE, WIDTH / 2, HEIGHT / 24)
     draw_text("LIVES: " + str(LIVES), 22, WHITE, WIDTH / 2 - 100, HEIGHT / 24)
     draw_text("FRAMES: " + str(FRAME), 22, WHITE, WIDTH / 2 + 150, HEIGHT / 24)
-    # draw_text("ENEMIES: " + str(len(enemy_list)), 22, WHITE, WIDTH / 2 - 250, HEIGHT / 24)
-    # draw_text("BULLETS: " + str(player_bullets), 22, WHITE, WIDTH / 2 - 400, HEIGHT / 24)
-    
-    # check if you win
-    # if len(enemies) == 0:
-    #     win = True
-        
-    # if win == True:
-    #     PLAYER_FIRERATE = 6
-    #     # print("YOU WIN!!!")
-    #     if FRAME % 15 == 0:
-    #         for i in range(50):
-    #             x = random.randint(0,WIDTH)
-    #             y = random.randint(0,HEIGHT)
-    #             movey = 2
-    #             movex = 0
-    #             e = Bullet(x, y, (colorbyte(), colorbyte(), colorbyte()), 2, 4, movex, movey, "confetti")
-    #             all_sprites.add(e)
-    #             bullets.add(e)
-    #     if FRAME % 1 == 0:
-    #         cooldown = random.randint(120, BOSS_FIRERATE)
-    #         x = random.choice([-5, (WIDTH + 5)])
-    #         y = 50
-    #         movey = 0
-    #         if x < 0:
-    #             movex = 10
-    #         else:
-    #             movex = -10
-    #         e = Boss(x, y, BLUE, 60, 30, movex, movey, cooldown, BOSS_DAMAGE)
-    #         all_sprites.add(e)
-    #         enemy_list.append(e)
-    #         bosses.add(e)
-            
-    #         cooldown = random.randint(120, ENEMY_FIRERATE)
-    #         x = random.randint(0,WIDTH)
-    #         y = random.randint(0,HEIGHT)
-    #         movey = 5
-    #         movex = 0
-    #         e = Enemy(x, y, RED, 30, 22, movex, movey, cooldown, ENEMY_HP)
-    #         all_sprites.add(e)
-    #         enemies.add(e)
-    #         enemy_list.append(e)
-    #             # print(e)
-    #     draw_text("YOU WIN!!!", 144, YELLOW, WIDTH / 2, HEIGHT / 2)
-    #         # gameover = True
         
     # check if you lose
     if LIVES <= 0:    
