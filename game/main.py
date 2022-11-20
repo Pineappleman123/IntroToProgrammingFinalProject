@@ -243,8 +243,8 @@ while running:
     
     # spawns new apple at random coordinates when the previous one is eaten
     if len(apples) == 0:
-        x = random.randint(0, WIDTH)
-        y = random.randint(0, HEIGHT)
+        x = random.randint(0, WIDTH/20) * 20
+        y = random.randint(0, HEIGHT/20) * 20
         apple = Apple(x, y)
         apples.add(apple)
         all_sprites.add(apple)
