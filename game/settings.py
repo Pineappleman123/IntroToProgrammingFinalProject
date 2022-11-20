@@ -1,7 +1,7 @@
 # game settings 
 WIDTH = 1280
 HEIGHT = 720
-FPS = 30
+FPS = 120
 FRAME = 1
 
 # player settings
@@ -11,7 +11,9 @@ ENEMY_FIRERATE = 10000 #10000 default
 ENEMY_HP = 1
 
 
-SNAKE_SPEED = 3
+
+
+SNAKE_SPEED = 1
 SCORE = 0
 LENGTH_PER_APPLE = 1
 

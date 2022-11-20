@@ -181,32 +181,33 @@ class Apple(Sprite):
         self.rect.center = (x, y)
         
     def update(self):
-        global SCORE, index, spawnx, spawny, SNAKE_SPEED, LEVEL
+        global SCORE, index, spawnx, spawny, SNAKE_SPEED, LEVEL, xdir, ydir
         # checks for apple collision with the snake
         hits = pg.sprite.spritecollide(self, snake, False)
         if hits:
             # code to spawn in new snake segments when collision with apple is detected.
-            for i in range(LENGTH_PER_APPLE):
-                # checks the direction of the last segment of the snake to provide coordinates for spawining in the new segment
-                if snake_segments[len(snake_segments) - 1].direction == "left":
-                    spawnx = 20
-                if snake_segments[len(snake_segments) - 1].direction == "right":
-                    spawnx = -20
-                if snake_segments[len(snake_segments) - 1].direction == "up":
-                    spawny = 20
-                if snake_segments[len(snake_segments) - 1].direction == "down":
-                    spawny = -20
-                # print(spawnx, ",", spawny)
-                # spawns in the new segment with the correct coordinates and same direction as the last segment
-                segment = Snake_Segment("body", index, (snake_segments[index - 1].rect.center[0] + spawnx), (snake_segments[index - 1].rect.center[1]) + spawny, snake_segments[len(snake_segments) - 1].direction)
-                # adds segment to all the sprite groups and the indexed list of snake segments
-                all_sprites.add(segment)
-                snake.add(segment)
-                snake_segments.append(segment)
-                index += 1
-                # resets the coordinates for the next run to avoid conflicts
-                spawnx = 0 
-                spawny = 0
+            if len(snake_segments) <= 10:
+                for i in range(LENGTH_PER_APPLE):
+                    # checks the direction of the last segment of the snake to provide coordinates for spawining in the new segment
+                    if snake_segments[len(snake_segments) - 1].direction == "left":
+                        spawnx = 20
+                    if snake_segments[len(snake_segments) - 1].direction == "right":
+                        spawnx = -20
+                    if snake_segments[len(snake_segments) - 1].direction == "up":
+                        spawny = 20
+                    if snake_segments[len(snake_segments) - 1].direction == "down":
+                        spawny = -20
+                    # print(spawnx, ",", spawny)
+                    # spawns in the new segment with the correct coordinates and same direction as the last segment
+                    segment = Snake_Segment("body", index, (snake_segments[index - 1].rect.center[0] + spawnx), (snake_segments[index - 1].rect.center[1]) + spawny, snake_segments[len(snake_segments) - 1].direction)
+                    # adds segment to all the sprite groups and the indexed list of snake segments
+                    all_sprites.add(segment)
+                    snake.add(segment)
+                    snake_segments.append(segment)
+                    index += 1
+                    # resets the coordinates for the next run to avoid conflicts
+                    spawnx = 0 
+                    spawny = 0
             # adds one to score and kills apple    
             SCORE += 1
             # levels that progress in difficulty
