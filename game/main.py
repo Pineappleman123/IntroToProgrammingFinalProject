@@ -28,7 +28,7 @@ pg.display.set_caption("Snake by Andrew Perevoztchikov")
 clock = pg.time.Clock()
 
 # loading filepaths for the sprite images
-img_dir1 = path.join(path.dirname(__file__), r'C:\githubstuff\intro_to_programming\videogameFall2022\game\images')
+# img_dir1 = path.join(path.dirname(__file__), r'C:\githubstuff\intro_to_programming\videogameFall2022\game\images')
 
 # function to draw text on the screen
 def draw_text(text, size, color, x, y):
@@ -44,20 +44,21 @@ def colorbyte():
     return random.randint(0,255)
 
 # get images for sprites and assign to variables
-background = pg.image.load(path.join(img_dir1, 'black.png')).convert()
-background = pg.transform.scale(background, (WIDTH, HEIGHT))
-background_rect = background.get_rect()
-player_img = pg.image.load(path.join(img_dir1, "playerShip1_orange.png")).convert()
-enemy_img = pg.image.load(path.join(img_dir1, "enemyGreen3.png")).convert()
-bullet_img = pg.image.load(path.join(img_dir1, "laserRed16.png")).convert()
-boss_img = pg.image.load(path.join(img_dir1, "enemyBlue2.png")).convert()
+# background = pg.image.load(path.join(img_dir1, 'black.png')).convert()
+# background = pg.transform.scale(background, (WIDTH, HEIGHT))
+# background_rect = background.get_rect()
+# player_img = pg.image.load(path.join(img_dir1, "playerShip1_orange.png")).convert()
+# enemy_img = pg.image.load(path.join(img_dir1, "enemyGreen3.png")).convert()
+# bullet_img = pg.image.load(path.join(img_dir1, "laserRed16.png")).convert()
+# boss_img = pg.image.load(path.join(img_dir1, "enemyBlue2.png")).convert()
 
-player_bullets = 0
+
 snake_segments = []
 index = 1
 
 count = 1
 direction = 0
+# snake class for initializing individual segments of the snake
 class Snake_Segment(Sprite):
     def __init__(self, type, index, x, y, direction):
         Sprite.__init__(self)
@@ -87,59 +88,32 @@ class Snake_Segment(Sprite):
             direction = 4
         
         
-        # if self.no_update == False:
+       
         if self.type == "head":
             # new movement direction
             if FRAME % SNAKE_SPEED == 0:
                 if direction == 1:
-                    # if self.direction != "left":
+              
                     if self.direction != "right":
                         self.direction = "left"
-                    # count = 1
-                        # if FRAME % SNAKE_SPEED == 0:
-                        #     self.rect.x -= 10
-                    # else:
-                    #     if FRAME % SNAKE_SPEED == 0:
-                    #         self.rect.x -= 10
+                  
                         
                 if direction == 2:
-                    # if self.direction != "right":
+                  
                     if self.direction != "left":
                         self.direction = "right"
-                    # count = 1
-                    #     if FRAME % SNAKE_SPEED == 0:
-                    #         self.rect.x += 10
-                    # else:
-                    #     if FRAME % SNAKE_SPEED == 0:
-                    #         self.rect.x += 10
+                  
                         
                 if direction == 3:
-                    # if self.direction != "up":
+                 
                     if self.direction != "down":
                         self.direction = "up"
-                    # count = 1
-                    #     if FRAME % SNAKE_SPEED == 0:
-                    #         self.rect.y -= 10
-                    # else:
-                    #     if FRAME % SNAKE_SPEED == 0:
-                    #         self.rect.y -= 10
-                        
+               
                 if direction == 4:
-                    # if self.direction != "down":
+                  
                     if self.direction != "up":
                         self.direction = "down"
-                    # count = 1
-                    #     if FRAME % SNAKE_SPEED == 0:
-                    #         self.rect.y += 10
-                    # else:
-                    #     if FRAME % SNAKE_SPEED == 0:
-                    #         self.rect.y += 10
-                # self.no_update = True
-        # else:
-        #     if FRAME % SNAKE_SPEED == 0:
-        #         self.no_update == False
-        #         keys = pg.K_SPACE
-        #         # count += 1
+                
                 
 
             
