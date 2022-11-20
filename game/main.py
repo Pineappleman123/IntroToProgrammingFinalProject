@@ -54,7 +54,11 @@ def colorbyte():
 
 # this list is very important as it stores all data for each snake segment in an easily accessible indexed list
 snake_segments = []
+apple_list = []
 index = 1
+
+xdir = random.choice(["left", "right"])
+ydir = random.choice(["up", "down"])
 
 count = 1
 direction = 0
@@ -73,10 +77,11 @@ class Snake_Segment(Sprite):
         self.next_direction = ""
         self.change_direction = False
         self.no_update = False
+        self.ai = True
         self.x = x
         self.y = y
     def controls(self):
-        global direction
+        global direction, xdir, ydir
         keys = pg.key.get_pressed()
         
         # sets initial key press to outside variable so that multiple keypressess will not be registered before updating snake
@@ -94,25 +99,34 @@ class Snake_Segment(Sprite):
         if self.type == "head":
             # new movement direction
             # limits direction changes to only when snake movement will be updated
-            if FRAME % SNAKE_SPEED == 0:
-                if direction == 1:
-                    #  all of the != blocks make sure snake will not go back into itself             
-                    if self.direction != "right":
-                        self.direction = "left"                  
-                        
-                if direction == 2:                  
-                    if self.direction != "left":
-                        self.direction = "right"
-                                          
-                if direction == 3:                
-                    if self.direction != "down":
-                        self.direction = "up"
-                                      
-                if direction == 4:                 
-                    if self.direction != "up":
-                        self.direction = "down"
-                
-                
+            if self.ai == False:
+                if FRAME % SNAKE_SPEED == 0:
+                    if direction == 1:
+                        #  all of the != blocks make sure snake will not go back into itself             
+                        if self.direction != "right":
+                            self.direction = "left"                  
+                            
+                    if direction == 2:                  
+                        if self.direction != "left":
+                            self.direction = "right"
+                                            
+                    if direction == 3:                
+                        if self.direction != "down":
+                            self.direction = "up"
+                                        
+                    if direction == 4:                 
+                        if self.direction != "up":
+                            self.direction = "down"
+            
+            if self.ai == True:               
+                if FRAME % SNAKE_SPEED == 0:                   
+                    if self.rect.x == apple_list[0].rect.x:
+                        self.direction = ydir
+                    if self.rect.y == apple_list[0].rect.y:
+                        self.direction = xdir
+                    
+                    
+                    
 
             
 
@@ -196,10 +210,13 @@ class Apple(Sprite):
             # adds one to score and kills apple    
             SCORE += 1
             # levels that progress in difficulty
-            if SNAKE_SPEED > 1:
+            if SNAKE_SPEED > 2:
                 if LEVEL * 5 - SCORE == 0:
                     SNAKE_SPEED -= 1
                     LEVEL += 1
+            xdir = random.choice(["left", "right"])
+            ydir = random.choice(["up", "down"])
+            apple_list.remove(self)
             self.kill()
 
             
@@ -258,6 +275,7 @@ while running:
         apple = Apple(x, y)
         apples.add(apple)
         all_sprites.add(apple)
+        apple_list.append(apple)
 
     # checks if the snake's head collides with the body and subtracts one life
     hits = pg.sprite.spritecollide(snake_head, snake, False)
