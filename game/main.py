@@ -167,7 +167,7 @@ class Apple(Sprite):
         self.rect.center = (x, y)
         
     def update(self):
-        global SCORE, index, spawnx, spawny
+        global SCORE, index, spawnx, spawny, SNAKE_SPEED, LEVEL
         # checks for apple collision with the snake
         hits = pg.sprite.spritecollide(self, snake, False)
         if hits:
@@ -195,6 +195,11 @@ class Apple(Sprite):
                 spawny = 0
             # adds one to score and kills apple    
             SCORE += 1
+            # levels that progress in difficulty
+            if SNAKE_SPEED > 1:
+                if LEVEL * 5 - SCORE == 0:
+                    SNAKE_SPEED -= 1
+                    LEVEL += 1
             self.kill()
 
             
@@ -242,7 +247,8 @@ while running:
                 press += 1  
      
 
-
+    
+    
                 
     
     # spawns new apple at random coordinates when the previous one is eaten
@@ -280,6 +286,7 @@ while running:
     draw_text("POINTS: " + str(SCORE), 22, WHITE, WIDTH / 2, HEIGHT / 24)
     draw_text("LIVES: " + str(LIVES), 22, WHITE, WIDTH / 2 - 100, HEIGHT / 24)
     draw_text("FRAMES: " + str(FRAME), 22, WHITE, WIDTH / 2 + 150, HEIGHT / 24)
+    draw_text("LEVEL: " + str(LEVEL), 22, WHITE, WIDTH / 2 + 300, HEIGHT / 24)
     draw_text("PRESS 'P' TO PAUSE", 22, WHITE, WIDTH / 2 - 250, HEIGHT / 24)
     if pause == True:
         draw_text("GAME PAUSED", 144, WHITE, WIDTH / 2, HEIGHT / 2)
