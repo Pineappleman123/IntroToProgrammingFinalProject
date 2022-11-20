@@ -52,7 +52,7 @@ def colorbyte():
 # bullet_img = pg.image.load(path.join(img_dir1, "laserRed16.png")).convert()
 # boss_img = pg.image.load(path.join(img_dir1, "enemyBlue2.png")).convert()
 
-
+# this list is very important as it stores all data for each snake segment in an easily accessible indexed list
 snake_segments = []
 index = 1
 
@@ -78,6 +78,8 @@ class Snake_Segment(Sprite):
     def controls(self):
         global direction
         keys = pg.key.get_pressed()
+        
+        # sets initial key press to outside variable so that multiple keypressess will not be registered before updating snake
         if keys[pg.K_LEFT]:
             direction = 1
         if keys[pg.K_RIGHT]:
@@ -88,29 +90,25 @@ class Snake_Segment(Sprite):
             direction = 4
         
         
-       
+        # code for head movement
         if self.type == "head":
             # new movement direction
+            # limits direction changes to only when snake movement will be updated
             if FRAME % SNAKE_SPEED == 0:
                 if direction == 1:
-              
+                    #  all of the != blocks make sure snake will not go back into itself             
                     if self.direction != "right":
-                        self.direction = "left"
-                  
+                        self.direction = "left"                  
                         
-                if direction == 2:
-                  
+                if direction == 2:                  
                     if self.direction != "left":
                         self.direction = "right"
-                  
-                        
-                if direction == 3:
-                 
+                                          
+                if direction == 3:                
                     if self.direction != "down":
                         self.direction = "up"
-               
-                if direction == 4:
-                  
+                                      
+                if direction == 4:                 
                     if self.direction != "up":
                         self.direction = "down"
                 
@@ -123,15 +121,20 @@ class Snake_Segment(Sprite):
         self.controls()
         # if direction is already set
         if FRAME % SNAKE_SPEED == 0:
+            # movement instructions for the body segments
             if self.type == "body":
+                # if change_direction is true then the segment of the snake will be allowed to change direction to the below queued direction
                 if self.change_direction == True:
                     self.direction = snake_segments[self.index - 1].direction
                     self.direction = self.next_direction
                     self.change_direction = False
-                # elif self.direction != snake_segments[self.index - 1].direction:
+                # this statement checks if the snake segment in front of the current one has changed direction
+                # next_direction queues the direction of the snake segment in front of the current one but does not change direction just yet so that the current segment can catch up with the one in front of it and not cause gaps
+                # this block then allows change_direction to be true so that in the next update the segment can change direction
                 if self.direction != snake_segments[self.index - 1].direction:
                     self.next_direction = snake_segments[self.index - 1].direction
                     self.change_direction = True
+            # this is just code to actually move the segment in the right direction by its width/hight(which is 20)
             if self.direction == "left":                
                 self.rect.x -= 20
             if self.direction == "right":                           
@@ -141,6 +144,7 @@ class Snake_Segment(Sprite):
             if self.direction == "down":                           
                 self.rect.y += 20
         
+        # this allows the snake to pass through the screen border and appear on the other side
         if self.rect.x < 0:
             self.rect.x = WIDTH - 20
         elif self.rect.x > WIDTH:
@@ -150,9 +154,10 @@ class Snake_Segment(Sprite):
         elif self.rect.y > HEIGHT:
             self.rect.y = 0
         
-        
+# variables for coordinates of new spawned segment after apple is eaten      
 spawnx = 0 
 spawny = 0      
+# apple class
 class Apple(Sprite):
     def __init__(self, x, y):
         Sprite.__init__(self)
@@ -163,9 +168,12 @@ class Apple(Sprite):
         
     def update(self):
         global SCORE, index, spawnx, spawny
+        # checks for apple collision with the snake
         hits = pg.sprite.spritecollide(self, snake, False)
         if hits:
+            # code to spawn in new snake segments when collision with apple is detected.
             for i in range(LENGTH_PER_APPLE):
+                # checks the direction of the last segment of the snake to provide coordinates for spawining in the new segment
                 if snake_segments[len(snake_segments) - 1].direction == "left":
                     spawnx = 20
                 if snake_segments[len(snake_segments) - 1].direction == "right":
@@ -174,14 +182,18 @@ class Apple(Sprite):
                     spawny = 20
                 if snake_segments[len(snake_segments) - 1].direction == "down":
                     spawny = -20
-                print(spawnx, ",", spawny)
+                # print(spawnx, ",", spawny)
+                # spawns in the new segment with the correct coordinates and same direction as the last segment
                 segment = Snake_Segment("body", index, (snake_segments[index - 1].rect.center[0] + spawnx), (snake_segments[index - 1].rect.center[1]) + spawny, snake_segments[len(snake_segments) - 1].direction)
+                # adds segment to all the sprite groups and the indexed list of snake segments
                 all_sprites.add(segment)
                 snake.add(segment)
                 snake_segments.append(segment)
                 index += 1
+                # resets the coordinates for the next run to avoid conflicts
                 spawnx = 0 
                 spawny = 0
+            # adds one to score and kills apple    
             SCORE += 1
             self.kill()
 
@@ -194,7 +206,7 @@ apples = pg.sprite.Group()
 snake = pg.sprite.Group()
 
 
-
+# initialises snake head before anything else for simplicity
 snake_head = Snake_Segment("head", 0, WIDTH/2 + 10, HEIGHT/2 + 10, "right")
 all_sprites.add(snake_head)
 snake.add(snake_head)
@@ -208,7 +220,7 @@ snake_segments.append(snake_head)
 # Game loop
 running = True
 gameover = False
-press = 1
+# press = 1
 while running:
     # keep the loop running using clock
     clock.tick(FPS)
@@ -229,14 +241,15 @@ while running:
 
                 
     
-    
+    # spawns new apple at random coordinates when the previous one is eaten
     if len(apples) == 0:
         x = random.randint(0, WIDTH)
         y = random.randint(0, HEIGHT)
         apple = Apple(x, y)
         apples.add(apple)
         all_sprites.add(apple)
-        
+
+    # checks if the snake's head collides with the body and subtracts one life
     hits = pg.sprite.spritecollide(snake_head, snake, False)
     if len(hits) == 2:
         LIVES -= 1
@@ -245,6 +258,7 @@ while running:
     # update all sprites
     # for segment in snake_segments:
     #     segment.update()
+    # updates sprites while game is not over
     if gameover == False:
         all_sprites.update()
     # if FRAME % SNAKE_SPEED == 0:
