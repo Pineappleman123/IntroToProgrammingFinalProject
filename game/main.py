@@ -232,6 +232,7 @@ while running:
         if event.type == pg.QUIT:
             running = False
         
+        # checks if key to pause game has been pressed
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_p:
                 if press % 2 == 0:
@@ -261,7 +262,7 @@ while running:
     # update all sprites
     # for segment in snake_segments:
     #     segment.update()
-    # updates sprites while game is not over
+    # updates sprites while game is not over or paused
     if gameover == False and pause == False:
         all_sprites.update()
     # if FRAME % SNAKE_SPEED == 0:
