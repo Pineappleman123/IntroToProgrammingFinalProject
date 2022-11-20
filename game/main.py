@@ -220,7 +220,8 @@ snake_segments.append(snake_head)
 # Game loop
 running = True
 gameover = False
-# press = 1
+pause = False
+press = 1
 while running:
     # keep the loop running using clock
     clock.tick(FPS)
@@ -230,21 +231,23 @@ while running:
         # check for closed window
         if event.type == pg.QUIT:
             running = False
-            
-        # if event.type == pg.KEYDOWN:
-        #     if press % 2 == 0:
-        #         if event.key == pg.K_p:
-        #             gameover == True
-        #     else:
-        #         gameover == False
-        #     press += 1
+        
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_p:
+                if press % 2 == 0:
+                    pause = False
+                else:
+                    pause = True       
+                press += 1  
+     
+
 
                 
     
     # spawns new apple at random coordinates when the previous one is eaten
     if len(apples) == 0:
-        x = random.randint(0, WIDTH/20) * 20 + 10
-        y = random.randint(0, HEIGHT/20) * 20 + 10
+        x = random.randint(0, WIDTH/20 - 20) * 20 + 10
+        y = random.randint(0, HEIGHT/20 - 20) * 20 + 10
         apple = Apple(x, y)
         apples.add(apple)
         all_sprites.add(apple)
@@ -259,7 +262,7 @@ while running:
     # for segment in snake_segments:
     #     segment.update()
     # updates sprites while game is not over
-    if gameover == False:
+    if gameover == False and pause == False:
         all_sprites.update()
     # if FRAME % SNAKE_SPEED == 0:
     #     count += 1
@@ -276,6 +279,10 @@ while running:
     draw_text("POINTS: " + str(SCORE), 22, WHITE, WIDTH / 2, HEIGHT / 24)
     draw_text("LIVES: " + str(LIVES), 22, WHITE, WIDTH / 2 - 100, HEIGHT / 24)
     draw_text("FRAMES: " + str(FRAME), 22, WHITE, WIDTH / 2 + 150, HEIGHT / 24)
+    draw_text("PRESS 'P' TO PAUSE", 22, WHITE, WIDTH / 2 - 250, HEIGHT / 24)
+    if pause == True:
+        draw_text("GAME PAUSED", 144, WHITE, WIDTH / 2, HEIGHT / 2)
+    
         
     # check if you lose
     if LIVES <= 0:    
