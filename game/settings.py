@@ -1,7 +1,7 @@
 # game settings 
 WIDTH = 1280
 HEIGHT = 720
-FPS = 120
+FPS = 30
 FRAME = 1
 
 # player settings
@@ -13,9 +13,10 @@ ENEMY_HP = 1
 
 
 
-SNAKE_SPEED = 1
+SNAKE_SPEED = 3
 SCORE = 0
 LENGTH_PER_APPLE = 1
+MAX_LEN = 1000
 
 
 # define colors

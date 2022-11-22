@@ -77,7 +77,7 @@ class Snake_Segment(Sprite):
         self.next_direction = ""
         self.change_direction = False
         self.no_update = False
-        self.ai = True
+        self.ai = False
         self.x = x
         self.y = y
     def controls(self):
@@ -186,7 +186,7 @@ class Apple(Sprite):
         hits = pg.sprite.spritecollide(self, snake, False)
         if hits:
             # code to spawn in new snake segments when collision with apple is detected.
-            if len(snake_segments) <= 10:
+            if len(snake_segments) <= MAX_LEN:
                 for i in range(LENGTH_PER_APPLE):
                     # checks the direction of the last segment of the snake to provide coordinates for spawining in the new segment
                     if snake_segments[len(snake_segments) - 1].direction == "left":
@@ -211,7 +211,7 @@ class Apple(Sprite):
             # adds one to score and kills apple    
             SCORE += 1
             # levels that progress in difficulty
-            if SNAKE_SPEED > 2:
+            if SNAKE_SPEED > 3:
                 if LEVEL * 5 - SCORE == 0:
                     SNAKE_SPEED -= 1
                     LEVEL += 1
@@ -236,7 +236,8 @@ snake.add(snake_head)
 snake_segments.append(snake_head)
 
 
-
+if snake_head.ai == True:
+    MAX_LEN = 20
     
 
 # win = False
