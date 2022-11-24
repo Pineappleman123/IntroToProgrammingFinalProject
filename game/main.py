@@ -57,8 +57,8 @@ snake_segments = []
 apple_list = []
 index = 1
 
-xdir = random.choice(["left", "right"])
-ydir = random.choice(["up", "down"])
+# xdir = random.choice(["left", "right"])
+# ydir = random.choice(["up", "down"])
 
 # variables for coordinates of new spawned segment after apple is eaten      
 spawnx = 0 
@@ -81,13 +81,12 @@ class Snake_Segment(Sprite):
         self.next_direction = ""
         self.change_direction = False
         self.no_update = False
-        self.ai = False
+        self.ai = True
         self.x = x
         self.y = y
     def controls(self):
-        global direction, xdir, ydir
+        global direction, SAFETY_FRAMES
         keys = pg.key.get_pressed()
-        
         # sets initial key press to outside variable so that multiple keypressess will not be registered before updating snake
         if keys[pg.K_LEFT]:
             direction = 1
@@ -123,11 +122,44 @@ class Snake_Segment(Sprite):
                             self.direction = "down"
             
             if self.ai == True:               
-                if FRAME % SNAKE_SPEED == 0:                   
-                    if self.rect.x == apple_list[0].rect.x:
-                        self.direction = ydir
-                    if self.rect.y == apple_list[0].rect.y:
-                        self.direction = xdir
+                if FRAME % SNAKE_SPEED == 0:
+                    for segment in snake_segments[1:]:
+                        if self.rect.x == segment.rect.x:
+                            if self.direction == "up": 
+                                if (self.rect.y - segment.rect.y)/20 == 1:
+                                    self.direction = random.choice(["left", "right"])
+                                    SAFETY_FRAMES += SNAKE_SPEED * 10
+                            elif self.direction == "down":
+                                if (self.rect.y - segment.rect.y)/20 == -1:
+                                    self.direction = random.choice(["left", "right"])
+                                    SAFETY_FRAMES += SNAKE_SPEED * 10
+
+                        if self.rect.y == segment.rect.y:
+                            if self.direction == "right": # or self.direction == "left":
+                                if (self.rect.x - segment.rect.x)/20 == -1:
+                                    self.direction = random.choice(["up", "down"])
+                                    SAFETY_FRAMES += SNAKE_SPEED * 10
+                            elif self.direction == "left":
+                                if (self.rect.x - segment.rect.x)/20 == 1:
+                                    self.direction = random.choice(["up", "down"])
+                                    SAFETY_FRAMES += SNAKE_SPEED * 10
+                    
+                    if SAFETY_FRAMES == 0:   
+                        if self.rect.x == apple_list[0].rect.x:
+                            if apple_list[0].rect.y < self.rect.y:                         
+                                if self.direction != "down":
+                                    self.direction = "up"
+                            if apple_list[0].rect.y > self.rect.y: 
+                                if self.direction != "up":
+                                    self.direction = "down"
+                        if self.rect.y == apple_list[0].rect.y:
+                            if apple_list[0].rect.x < self.rect.x: 
+                                if self.direction != "right":
+                                    self.direction = "left"
+                            if apple_list[0].rect.x > self.rect.x: 
+                                if self.direction != "left":
+                                    self.direction = "right"
+                    
                     
                     
                     
@@ -197,8 +229,8 @@ class Apple(Sprite):
                 if LEVEL * 5 - SCORE == 0:
                     SNAKE_SPEED -= 1
                     LEVEL += 1
-            xdir = random.choice(["left", "right"])
-            ydir = random.choice(["up", "down"])
+            # xdir = random.choice(["left", "right"])
+            # ydir = random.choice(["up", "down"])
             apple_list.remove(self)
             self.kill()
 
@@ -299,8 +331,8 @@ while running:
         all_sprites.update()
     # if FRAME % SNAKE_SPEED == 0:
     #     count += 1
-    
-
+    if SAFETY_FRAMES > 0:
+        SAFETY_FRAMES -= 1
     ############ Draw ################
     # draw the background screen
     screen.fill(BLACK)
