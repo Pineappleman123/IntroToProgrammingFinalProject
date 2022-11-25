@@ -126,23 +126,23 @@ class Snake_Segment(Sprite):
                     for segment in snake_segments[1:]:
                         if self.rect.x == segment.rect.x:
                             if self.direction == "up": 
-                                if (self.rect.y - segment.rect.y)/20 == 1:
+                                if (self.rect.y - segment.rect.y)/20 == 1 or (self.rect.y - segment.rect.y)/20 == 2:
                                     self.direction = random.choice(["left", "right"])
-                                    SAFETY_FRAMES += SNAKE_SPEED * 10
+                                    SAFETY_FRAMES += SNAKE_SPEED * 20
                             elif self.direction == "down":
-                                if (self.rect.y - segment.rect.y)/20 == -1:
+                                if (self.rect.y - segment.rect.y)/20 == -1 or (self.rect.y - segment.rect.y)/20 == -2:
                                     self.direction = random.choice(["left", "right"])
-                                    SAFETY_FRAMES += SNAKE_SPEED * 10
+                                    SAFETY_FRAMES += SNAKE_SPEED * 20
 
-                        if self.rect.y == segment.rect.y:
-                            if self.direction == "right": # or self.direction == "left":
-                                if (self.rect.x - segment.rect.x)/20 == -1:
+                        elif self.rect.y == segment.rect.y:
+                            if self.direction == "right": 
+                                if (self.rect.x - segment.rect.x)/20 == -1 or (self.rect.x - segment.rect.x)/20 == -2:
                                     self.direction = random.choice(["up", "down"])
-                                    SAFETY_FRAMES += SNAKE_SPEED * 10
+                                    SAFETY_FRAMES += SNAKE_SPEED * 20
                             elif self.direction == "left":
-                                if (self.rect.x - segment.rect.x)/20 == 1:
+                                if (self.rect.x - segment.rect.x)/20 == 1 or (self.rect.x - segment.rect.x)/20 == 2:
                                     self.direction = random.choice(["up", "down"])
-                                    SAFETY_FRAMES += SNAKE_SPEED * 10
+                                    SAFETY_FRAMES += SNAKE_SPEED * 20
                     
                     if SAFETY_FRAMES == 0:   
                         if self.rect.x == apple_list[0].rect.x:
