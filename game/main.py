@@ -81,7 +81,7 @@ class Snake_Segment(Sprite):
         self.next_direction = ""
         self.change_direction = False
         self.no_update = False
-        self.ai = True
+        self.ai = False
         self.x = x
         self.y = y
     def controls(self):
@@ -221,18 +221,22 @@ class Apple(Sprite):
         # checks for apple collision with the snake
         hits = pg.sprite.spritecollide(self, snake, False)
         if hits:
-            SPAWN_QUEUE += LENGTH_PER_APPLE
-            # adds one to score and kills apple    
-            SCORE += 1
-            # levels that progress in difficulty
-            if SNAKE_SPEED > 3:
-                if LEVEL * 5 - SCORE == 0:
-                    SNAKE_SPEED -= 1
-                    LEVEL += 1
-            # xdir = random.choice(["left", "right"])
-            # ydir = random.choice(["up", "down"])
-            apple_list.remove(self)
-            self.kill()
+            if hits[0].type == "head":
+                SPAWN_QUEUE += LENGTH_PER_APPLE
+                # adds one to score and kills apple    
+                SCORE += 1
+                # levels that progress in difficulty
+                if SNAKE_SPEED > 3:
+                    if LEVEL * 5 - SCORE == 0:
+                        SNAKE_SPEED -= 1
+                        LEVEL += 1
+                # xdir = random.choice(["left", "right"])
+                # ydir = random.choice(["up", "down"])
+                apple_list.remove(self)
+                self.kill()
+            else: 
+                apple_list.remove(self)
+                self.kill()
 
             
 
