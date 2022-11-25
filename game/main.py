@@ -27,6 +27,9 @@ screen = pg.display.set_mode((WIDTH, HEIGHT))
 pg.display.set_caption("Snake by Andrew Perevoztchikov")
 clock = pg.time.Clock()
 
+hiscore = open("hiscore.txt", "r+")
+
+
 # loading filepaths for the sprite images
 # img_dir1 = path.join(path.dirname(__file__), r'C:\githubstuff\intro_to_programming\videogameFall2022\game\images')
 
@@ -350,6 +353,8 @@ while running:
     draw_text("FRAMES: " + str(FRAME), 22, WHITE, WIDTH / 2 + 150, HEIGHT / 24)
     draw_text("LEVEL: " + str(LEVEL), 22, WHITE, WIDTH / 2 + 300, HEIGHT / 24)
     draw_text("PRESS 'P' TO PAUSE", 22, WHITE, WIDTH / 2 - 250, HEIGHT / 24)
+    draw_text("SNAKE LENGTH: " + str(len(snake)), 22, WHITE, WIDTH / 2 - 450, HEIGHT / 24)
+    draw_text("HISCORE: " + str(hiscore.read()), 22, WHITE, WIDTH / 2 + 450, HEIGHT / 24)
     if pause == True:
         draw_text("GAME PAUSED", 144, WHITE, WIDTH / 2, HEIGHT / 2)
     
@@ -363,4 +368,8 @@ while running:
     pg.display.flip()
     FRAME += 1
 
+if SCORE > int(hiscore.read()):
+    print("score written")
+    hiscore.write(str(SCORE))
+hiscore.close()
 pg.quit()
