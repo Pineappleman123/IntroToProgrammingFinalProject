@@ -286,18 +286,23 @@ all_sprites.add(snake_head)
 snake.add(snake_head)
 snake_segments.append(snake_head)
 
-
-if snake_head.ai == True:
-    MAX_LEN = 20
  
 if WALLS == True:  
     for i in range(AMOUNT_WALLS): 
         x = random.randint(0, WIDTH/20 - 1) * 20 + 10
         y = random.randint(0, HEIGHT/20 - 1) * 20 + 10
-        wall = Wall(x, y, 1)
-        wall_list.append(wall)
-        walls.add(wall)
-        all_sprites.add(wall)
+        if abs(x - snake_head.rect.x) >= 20:
+            if abs(y - snake_head.rect.y) >= 20:           
+                wall = Wall(x, y, 1)
+                wall_list.append(wall)
+                walls.add(wall)
+                all_sprites.add(wall)
+        if abs(y - snake_head.rect.y) >= 20:
+            if abs(x - snake_head.rect.x) >= 20:           
+                wall = Wall(x, y, 1)
+                wall_list.append(wall)
+                walls.add(wall)
+                all_sprites.add(wall)
 
 # win = False
 # Game loop
