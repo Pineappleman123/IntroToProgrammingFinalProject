@@ -86,7 +86,7 @@ class Snake_Segment(Sprite):
         self.next_direction = ""
         self.change_direction = False
         self.no_update = False
-        self.ai = False
+        self.ai = True
         self.x = x
         self.y = y
     def controls(self):
@@ -131,6 +131,28 @@ class Snake_Segment(Sprite):
                 if FRAME % SNAKE_SPEED == 0:
                     # code to prevent snake from hitting its own tail
                     for segment in snake_segments[1:]:
+                        if self.rect.x == segment.rect.x:
+                            # checks direction of head and checks if it is about to collide with the tail and makes it move parallel thus avoiding tail
+                            if self.direction == "up": 
+                                if (self.rect.y - segment.rect.y)/20 == 1 or (self.rect.y - segment.rect.y)/20 == 2:
+                                    self.direction = random.choice(["left", "right"])
+                                    SAFETY_FRAMES += SNAKE_SPEED * 20
+                            elif self.direction == "down":
+                                if (self.rect.y - segment.rect.y)/20 == -1 or (self.rect.y - segment.rect.y)/20 == -2:
+                                    self.direction = random.choice(["left", "right"])
+                                    SAFETY_FRAMES += SNAKE_SPEED * 20
+
+                        elif self.rect.y == segment.rect.y:
+                            if self.direction == "right": 
+                                if (self.rect.x - segment.rect.x)/20 == -1 or (self.rect.x - segment.rect.x)/20 == -2:
+                                    self.direction = random.choice(["up", "down"])
+                                    SAFETY_FRAMES += SNAKE_SPEED * 20
+                            elif self.direction == "left":
+                                if (self.rect.x - segment.rect.x)/20 == 1 or (self.rect.x - segment.rect.x)/20 == 2:
+                                    self.direction = random.choice(["up", "down"])
+                                    SAFETY_FRAMES += SNAKE_SPEED * 20
+                                    
+                    for segment in wall_list:
                         if self.rect.x == segment.rect.x:
                             # checks direction of head and checks if it is about to collide with the tail and makes it move parallel thus avoiding tail
                             if self.direction == "up": 
@@ -239,6 +261,11 @@ class Apple(Sprite):
             else: 
                 apple_list.remove(self)
                 self.kill()
+        
+        hits1 = pg.sprite.spritecollide(self, walls, False)
+        if hits1:
+            apple_list.remove(self)
+            self.kill()
 
 class Wall(Sprite):
     def __init__(self, x, y, iterations):
@@ -289,8 +316,8 @@ snake_segments.append(snake_head)
  
 if WALLS == True:  
     for i in range(AMOUNT_WALLS): 
-        x = random.randint(0, WIDTH/20 - 1) * 20 + 10
-        y = random.randint(0, HEIGHT/20 - 1) * 20 + 10
+        x = random.randint(1, WIDTH/20 - 2) * 20 + 10
+        y = random.randint(1, HEIGHT/20 - 2) * 20 + 10
         if abs(x - snake_head.rect.x) >= 20:
             if abs(y - snake_head.rect.y) >= 20:           
                 wall = Wall(x, y, 1)
