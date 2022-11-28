@@ -85,7 +85,7 @@ class Snake_Segment(Sprite):
         self.next_direction = ""
         self.change_direction = False
         self.no_update = False
-        self.ai = True
+        self.ai = False
         self.x = x
         self.y = y
     def controls(self):
@@ -242,13 +242,27 @@ class Apple(Sprite):
                 apple_list.remove(self)
                 self.kill()
 
-            
-
+class Wall(Sprite):
+    def __init__(self, x, y):
+        Sprite.__init__(self)
+        self.image = pg.Surface((20, 20))
+        self.image.fill(GREY)
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+    
+    def update(self):
+        global LIVES
+        hits = pg.sprite.spritecollide(self, snake, False)
+        if hits:
+            if hits[0].type == "head":
+                LIVES -= 1
+        
 
 # create a group for all sprites
 all_sprites = pg.sprite.Group()
 apples = pg.sprite.Group()
 snake = pg.sprite.Group()
+walls = pg.sprite.Group()
 
 
 # initialises snake head before anything else for simplicity
@@ -260,7 +274,14 @@ snake_segments.append(snake_head)
 
 if snake_head.ai == True:
     MAX_LEN = 20
-    
+ 
+if WALLS == True:  
+    for i in range(10): 
+        x = random.randint(0, WIDTH/20 - 1) * 20 + 10
+        y = random.randint(0, HEIGHT/20 - 1) * 20 + 10
+        wall = Wall(x, y)
+        walls.add(wall)
+        all_sprites.add(wall)
 
 # win = False
 # Game loop
@@ -317,7 +338,7 @@ while running:
                 
     
     # spawns new apple at random coordinates when the previous one is eaten
-    if len(apples) <= 100:
+    if len(apples) <= 0:
         x = random.randint(0, WIDTH/20 - 1) * 20 + 10
         y = random.randint(0, HEIGHT/20 - 1) * 20 + 10
         apple = Apple(x, y)

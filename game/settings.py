@@ -13,12 +13,13 @@ ENEMY_HP = 1
 
 
 
-SNAKE_SPEED = 1
+SNAKE_SPEED = 3
 SCORE = 0
 LENGTH_PER_APPLE = 1
 MAX_LEN = 20
 SPAWN_QUEUE = 0
 SAFETY_FRAMES = 0
+WALLS = True
 
 
 # define colors
@@ -28,6 +29,7 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (225, 225, 0)
+GREY = (192, 192, 192)
 
 # score
 SCORE = 0
