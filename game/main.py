@@ -59,6 +59,7 @@ def colorbyte():
 # this list is very important as it stores all data for each snake segment in an easily accessible indexed list
 snake_segments = []
 apple_list = []
+wall_list = []
 index = 1
 
 # xdir = random.choice(["left", "right"])
@@ -125,10 +126,13 @@ class Snake_Segment(Sprite):
                         if self.direction != "up":
                             self.direction = "down"
             
+            # automatic movement function
             if self.ai == True:               
                 if FRAME % SNAKE_SPEED == 0:
+                    # code to prevent snake from hitting its own tail
                     for segment in snake_segments[1:]:
                         if self.rect.x == segment.rect.x:
+                            # checks direction of head and checks if it is about to collide with the tail and makes it move parallel thus avoiding tail
                             if self.direction == "up": 
                                 if (self.rect.y - segment.rect.y)/20 == 1 or (self.rect.y - segment.rect.y)/20 == 2:
                                     self.direction = random.choice(["left", "right"])
@@ -164,12 +168,6 @@ class Snake_Segment(Sprite):
                                 if self.direction != "left":
                                     self.direction = "right"
                     
-                    
-                    
-                    
-
-            
-
     def update(self):
         global LIVES, SPAWN_QUEUE, spawnx, spawny, MAX_LEN, index
         self.controls()
@@ -243,15 +241,32 @@ class Apple(Sprite):
                 self.kill()
 
 class Wall(Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, iterations):
         Sprite.__init__(self)
         self.image = pg.Surface((20, 20))
         self.image.fill(GREY)
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
+        self.x = x
+        self.y = y
+        self.iterations = iterations
     
     def update(self):
         global LIVES
+        prevx = self.x
+        prevy = self.y
+        if self.iterations == 1:
+            for i in range(5):
+                x = prevx + random.choice([-20, 0, 20])
+                y = prevy + random.choice([-20, 0, 20])
+                prevx = x
+                prevy = y
+                wall = Wall(x, y, 0)
+                wall_list.append(wall)
+                walls.add(wall)
+                all_sprites.add(wall)
+            self.kill()
+        
         hits = pg.sprite.spritecollide(self, snake, False)
         if hits:
             if hits[0].type == "head":
@@ -276,10 +291,11 @@ if snake_head.ai == True:
     MAX_LEN = 20
  
 if WALLS == True:  
-    for i in range(10): 
+    for i in range(AMOUNT_WALLS): 
         x = random.randint(0, WIDTH/20 - 1) * 20 + 10
         y = random.randint(0, HEIGHT/20 - 1) * 20 + 10
-        wall = Wall(x, y)
+        wall = Wall(x, y, 1)
+        wall_list.append(wall)
         walls.add(wall)
         all_sprites.add(wall)
 
@@ -345,6 +361,9 @@ while running:
         apples.add(apple)
         all_sprites.add(apple)
         apple_list.append(apple)
+    
+        
+    print(len(walls))   
 
     # checks if the snake's head collides with the body and subtracts one life
     hits = pg.sprite.spritecollide(snake_head, snake, False)
@@ -372,7 +391,7 @@ while running:
     # draw score and lives on screen
     draw_text("POINTS: " + str(SCORE), 22, WHITE, WIDTH / 2, HEIGHT / 24)
     draw_text("LIVES: " + str(LIVES), 22, WHITE, WIDTH / 2 - 100, HEIGHT / 24)
-    draw_text("FRAMES: " + str(FRAME), 22, WHITE, WIDTH / 2 + 150, HEIGHT / 24)
+    # draw_text("FRAMES: " + str(FRAME), 22, WHITE, WIDTH / 2 + 150, HEIGHT / 24)
     draw_text("LEVEL: " + str(LEVEL), 22, WHITE, WIDTH / 2 + 300, HEIGHT / 24)
     draw_text("PRESS 'P' TO PAUSE", 22, WHITE, WIDTH / 2 - 250, HEIGHT / 24)
     draw_text("SNAKE LENGTH: " + str(len(snake)), 22, WHITE, WIDTH / 2 - 450, HEIGHT / 24)

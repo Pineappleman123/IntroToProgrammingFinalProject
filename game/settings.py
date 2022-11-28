@@ -20,6 +20,7 @@ MAX_LEN = 20
 SPAWN_QUEUE = 0
 SAFETY_FRAMES = 0
 WALLS = True
+AMOUNT_WALLS = 20
 
 
 # define colors
