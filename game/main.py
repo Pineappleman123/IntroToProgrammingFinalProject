@@ -150,7 +150,7 @@ class Snake_Segment(Sprite):
                             elif self.direction == "left":
                                 if (self.rect.x - segment.rect.x)/20 == 1 or (self.rect.x - segment.rect.x)/20 == 2:
                                     self.direction = random.choice(["up", "down"])
-                                    SAFETY_FRAMES += SNAKE_SPEED * 20
+                                    SAFETY_FRAMES += SNAKE_SPEED * 10
                                     
                     for segment in wall_list:
                         if self.rect.x == segment.rect.x:
@@ -158,21 +158,21 @@ class Snake_Segment(Sprite):
                             if self.direction == "up": 
                                 if (self.rect.y - segment.rect.y)/20 == 1 or (self.rect.y - segment.rect.y)/20 == 2:
                                     self.direction = random.choice(["left", "right"])
-                                    SAFETY_FRAMES += SNAKE_SPEED * 20
+                                    SAFETY_FRAMES += SNAKE_SPEED * 10
                             elif self.direction == "down":
                                 if (self.rect.y - segment.rect.y)/20 == -1 or (self.rect.y - segment.rect.y)/20 == -2:
                                     self.direction = random.choice(["left", "right"])
-                                    SAFETY_FRAMES += SNAKE_SPEED * 20
+                                    SAFETY_FRAMES += SNAKE_SPEED * 10
 
                         elif self.rect.y == segment.rect.y:
                             if self.direction == "right": 
                                 if (self.rect.x - segment.rect.x)/20 == -1 or (self.rect.x - segment.rect.x)/20 == -2:
                                     self.direction = random.choice(["up", "down"])
-                                    SAFETY_FRAMES += SNAKE_SPEED * 20
+                                    SAFETY_FRAMES += SNAKE_SPEED * 10
                             elif self.direction == "left":
                                 if (self.rect.x - segment.rect.x)/20 == 1 or (self.rect.x - segment.rect.x)/20 == 2:
                                     self.direction = random.choice(["up", "down"])
-                                    SAFETY_FRAMES += SNAKE_SPEED * 20
+                                    SAFETY_FRAMES += SNAKE_SPEED * 10
                     
                     if SAFETY_FRAMES == 0:   
                         if self.rect.x == apple_list[0].rect.x:
@@ -277,21 +277,49 @@ class Wall(Sprite):
         self.x = x
         self.y = y
         self.iterations = iterations
+        self.direction = ""
     
     def update(self):
         global LIVES
         prevx = self.x
         prevy = self.y
+        x = self.x
+        y = self.y
+        count = 0
         if self.iterations == 1:
-            for i in range(5):
-                x = prevx + random.choice([-20, 0, 20])
-                y = prevy + random.choice([-20, 0, 20])
+            for i in range(WALL_LEN):
+                old_direction = self.direction
+                
+                if self.direction == "left":
+                    self.direction = random.choice(["right", "up", "down"])
+                elif self.direction == "right":
+                    self.direction = random.choice(["left", "up", "down"])
+                elif self.direction == "up":
+                    self.direction = random.choice(["left", "right", "down"])
+                elif self.direction == "down":
+                    self.direction = random.choice(["left", "right", "up"])
+                else:
+                    self.direction = random.choice(["left", "right", "up", "down"])
+                
+                if self.direction != old_direction:
+                    if count % 3 != 0:
+                        self.direction = old_direction
+                
+                if self.direction == "left":                
+                    x = prevx - 20
+                if self.direction == "right":                           
+                    x = prevx + 20           
+                if self.direction == "up":                           
+                    y = prevy - 20           
+                if self.direction == "down":                           
+                    y = prevy + 20
                 prevx = x
                 prevy = y
                 wall = Wall(x, y, 0)
                 wall_list.append(wall)
                 walls.add(wall)
                 all_sprites.add(wall)
+                count += 1
             self.kill()
         
         hits = pg.sprite.spritecollide(self, snake, False)

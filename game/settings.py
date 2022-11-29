@@ -7,8 +7,8 @@ FRAME = 1
 # player settings
 # PLAYER_GRAVITY = 0.8
 # less = faster
-ENEMY_FIRERATE = 10000 #10000 default
-ENEMY_HP = 1
+# ENEMY_FIRERATE = 10000 #10000 default
+# ENEMY_HP = 1
 
 
 
@@ -21,6 +21,7 @@ SPAWN_QUEUE = 0
 SAFETY_FRAMES = 0
 WALLS = True
 AMOUNT_WALLS = 10
+WALL_LEN = 8
 
 
 # define colors
@@ -34,5 +35,5 @@ GREY = (192, 192, 192)
 
 # score
 SCORE = 0
-LIVES = 1
+LIVES = 5000
 LEVEL = 1
