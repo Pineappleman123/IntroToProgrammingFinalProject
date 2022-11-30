@@ -58,9 +58,11 @@ def colorbyte():
 
 # this list is very important as it stores all data for each snake segment in an easily accessible indexed list
 snake_segments = []
+snake_segments2 = []
 apple_list = []
 wall_list = []
 index = 1
+index2 = 1
 
 # xdir = random.choice(["left", "right"])
 # ydir = random.choice(["up", "down"])
@@ -73,7 +75,7 @@ count = 1
 direction = 0
 # snake class for initializing individual segments of the snake
 class Snake_Segment(Sprite):
-    def __init__(self, type, index, x, y, direction):
+    def __init__(self, type, index, x, y, direction, player):
         Sprite.__init__(self)
         self.image = pg.Surface((20, 20))
         self.image.fill(GREEN)
@@ -86,21 +88,32 @@ class Snake_Segment(Sprite):
         self.next_direction = ""
         self.change_direction = False
         self.no_update = False
-        self.ai = True
+        self.ai = False
         self.x = x
         self.y = y
+        self.player = player
     def controls(self):
         global direction, SAFETY_FRAMES
         keys = pg.key.get_pressed()
         # sets initial key press to outside variable so that multiple keypressess will not be registered before updating snake
-        if keys[pg.K_LEFT]:
-            direction = 1
-        if keys[pg.K_RIGHT]:
-            direction = 2
-        if keys[pg.K_UP]:
-            direction = 3
-        if keys[pg.K_DOWN]:
-            direction = 4
+        if self.player == "p1":
+            if keys[pg.K_LEFT]:
+                direction = 1
+            if keys[pg.K_RIGHT]:
+                direction = 2
+            if keys[pg.K_UP]:
+                direction = 3
+            if keys[pg.K_DOWN]:
+                direction = 4
+        if self.player == "p2":
+            if keys[pg.K_a]:
+                direction = 5
+            if keys[pg.K_d]:
+                direction = 6
+            if keys[pg.K_w]:
+                direction = 7
+            if keys[pg.K_s]:
+                direction = 8
         
         
         # code for head movement
@@ -109,22 +122,40 @@ class Snake_Segment(Sprite):
             # limits direction changes to only when snake movement will be updated
             if self.ai == False:
                 if FRAME % SNAKE_SPEED == 0:
-                    if direction == 1:
-                        #  all of the != blocks make sure snake will not go back into itself             
-                        if self.direction != "right":
-                            self.direction = "left"                  
-                            
-                    if direction == 2:                  
-                        if self.direction != "left":
-                            self.direction = "right"
+                    if self.player == "p1":
+                        if direction == 1:
+                            #  all of the != blocks make sure snake will not go back into itself             
+                            if self.direction != "right":
+                                self.direction = "left"                  
+                                
+                        if direction == 2:                  
+                            if self.direction != "left":
+                                self.direction = "right"
+                                                
+                        if direction == 3:                
+                            if self.direction != "down":
+                                self.direction = "up"
                                             
-                    if direction == 3:                
-                        if self.direction != "down":
-                            self.direction = "up"
-                                        
-                    if direction == 4:                 
-                        if self.direction != "up":
-                            self.direction = "down"
+                        if direction == 4:                 
+                            if self.direction != "up":
+                                self.direction = "down"
+                    if self.player == "p2":
+                        if direction == 5:
+                            #  all of the != blocks make sure snake will not go back into itself             
+                            if self.direction != "right":
+                                self.direction = "left"                  
+                                
+                        if direction == 6:                  
+                            if self.direction != "left":
+                                self.direction = "right"
+                                                
+                        if direction == 7:                
+                            if self.direction != "down":
+                                self.direction = "up"
+                                            
+                        if direction == 8:                 
+                            if self.direction != "up":
+                                self.direction = "down"
             
             # automatic movement function
             if self.ai == True:               
@@ -194,30 +225,57 @@ class Snake_Segment(Sprite):
         global LIVES, SPAWN_QUEUE, spawnx, spawny, MAX_LEN, index
         self.controls()
         
-        # if direction is already set
-        if FRAME % SNAKE_SPEED == 0:
-            # movement instructions for the body segments
-            if self.type == "body":
-                # if change_direction is true then the segment of the snake will be allowed to change direction to the below queued direction
-                if self.change_direction == True:
-                    self.direction = snake_segments[self.index - 1].direction
-                    self.direction = self.next_direction
-                    self.change_direction = False
-                # this statement checks if the snake segment in front of the current one has changed direction
-                # next_direction queues the direction of the snake segment in front of the current one but does not change direction just yet so that the current segment can catch up with the one in front of it and not cause gaps
-                # this block then allows change_direction to be true so that in the next update the segment can change direction
-                if self.direction != snake_segments[self.index - 1].direction:
-                    self.next_direction = snake_segments[self.index - 1].direction
-                    self.change_direction = True
-            # this is just code to actually move the segment in the right direction by its width/hight(which is 20)
-            if self.direction == "left":                
-                self.rect.x -= 20
-            if self.direction == "right":                           
-                self.rect.x += 20           
-            if self.direction == "up":                           
-                self.rect.y -= 20           
-            if self.direction == "down":                           
-                self.rect.y += 20
+        if self.player == "p1":
+            # if direction is already set
+            if FRAME % SNAKE_SPEED == 0:
+                # movement instructions for the body segments
+                if self.type == "body":
+                    # if change_direction is true then the segment of the snake will be allowed to change direction to the below queued direction
+                    if self.change_direction == True:
+                        self.direction = snake_segments[self.index - 1].direction
+                        self.direction = self.next_direction
+                        self.change_direction = False
+                    # this statement checks if the snake segment in front of the current one has changed direction
+                    # next_direction queues the direction of the snake segment in front of the current one but does not change direction just yet so that the current segment can catch up with the one in front of it and not cause gaps
+                    # this block then allows change_direction to be true so that in the next update the segment can change direction
+                    if self.direction != snake_segments[self.index - 1].direction:
+                        self.next_direction = snake_segments[self.index - 1].direction
+                        self.change_direction = True
+                # this is just code to actually move the segment in the right direction by its width/hight(which is 20)
+                if self.direction == "left":                
+                    self.rect.x -= 20
+                if self.direction == "right":                           
+                    self.rect.x += 20           
+                if self.direction == "up":                           
+                    self.rect.y -= 20           
+                if self.direction == "down":                           
+                    self.rect.y += 20
+        if self.player == "p2":
+            # if direction is already set
+            if FRAME % SNAKE_SPEED == 0:
+                # movement instructions for the body segments
+                if self.type == "body":
+                    # if change_direction is true then the segment of the snake will be allowed to change direction to the below queued direction
+                    if self.change_direction == True:
+                        self.direction = snake_segments2[self.index - 1].direction
+                        self.direction = self.next_direction
+                        self.change_direction = False
+                    # this statement checks if the snake segment in front of the current one has changed direction
+                    # next_direction queues the direction of the snake segment in front of the current one but does not change direction just yet so that the current segment can catch up with the one in front of it and not cause gaps
+                    # this block then allows change_direction to be true so that in the next update the segment can change direction
+                    if self.direction != snake_segments2[self.index - 1].direction:
+                        self.next_direction = snake_segments2[self.index - 1].direction
+                        self.change_direction = True
+                # this is just code to actually move the segment in the right direction by its width/hight(which is 20)
+                if self.direction == "left":                
+                    self.rect.x -= 20
+                if self.direction == "right":                           
+                    self.rect.x += 20           
+                if self.direction == "up":                           
+                    self.rect.y -= 20           
+                if self.direction == "down":                           
+                    self.rect.y += 20
+        
         
         # this allows the snake to pass through the screen border and appear on the other side
         if self.rect.x < 0:
@@ -241,23 +299,37 @@ class Apple(Sprite):
         self.rect.center = (x, y)
         
     def update(self):
-        global SCORE, index, spawnx, spawny, SNAKE_SPEED, LEVEL, xdir, ydir, SPAWN_QUEUE, LENGTH_PER_APPLE
+        global SCORE, index, spawnx, spawny, SNAKE_SPEED, LEVEL, xdir, ydir, SPAWN_QUEUE, LENGTH_PER_APPLE, SPAWN_QUEUE2
         # checks for apple collision with the snake
         hits = pg.sprite.spritecollide(self, snake, False)
         if hits:
             if hits[0].type == "head":
-                SPAWN_QUEUE += LENGTH_PER_APPLE
-                # adds one to score and kills apple    
-                SCORE += 1
-                # levels that progress in difficulty
-                if SNAKE_SPEED > 3:
-                    if LEVEL * 5 - SCORE == 0:
-                        SNAKE_SPEED -= 1
-                        LEVEL += 1
-                # xdir = random.choice(["left", "right"])
-                # ydir = random.choice(["up", "down"])
-                apple_list.remove(self)
-                self.kill()
+                if hits[0].player == "p1":
+                    SPAWN_QUEUE += LENGTH_PER_APPLE
+                    # adds one to score and kills apple    
+                    SCORE += 1
+                    # levels that progress in difficulty
+                    if SNAKE_SPEED > 3:
+                        if LEVEL * 5 - SCORE == 0:
+                            SNAKE_SPEED -= 1
+                            LEVEL += 1
+                    # xdir = random.choice(["left", "right"])
+                    # ydir = random.choice(["up", "down"])
+                    apple_list.remove(self)
+                    self.kill()
+                if hits[0].player == "p2":
+                    SPAWN_QUEUE2 += LENGTH_PER_APPLE
+                    # adds one to score and kills apple    
+                    SCORE += 1
+                    # levels that progress in difficulty
+                    if SNAKE_SPEED > 3:
+                        if LEVEL * 5 - SCORE == 0:
+                            SNAKE_SPEED -= 1
+                            LEVEL += 1
+                    # xdir = random.choice(["left", "right"])
+                    # ydir = random.choice(["up", "down"])
+                    apple_list.remove(self)
+                    self.kill()
             else: 
                 apple_list.remove(self)
                 self.kill()
@@ -281,15 +353,19 @@ class Wall(Sprite):
     
     def update(self):
         global LIVES
+        # variables for x and y of previous wall
         prevx = self.x
         prevy = self.y
         x = self.x
         y = self.y
+        # count to make sure walls dont turn too often
         count = 0
         if self.iterations == 1:
             for i in range(WALL_LEN):
+                # variable to store direction of previous wall for later calculations
                 old_direction = self.direction
                 
+                # at every turn of the wall it will choose a random direction that is not going back into the wall
                 if self.direction == "left":
                     self.direction = random.choice(["right", "up", "down"])
                 elif self.direction == "right":
@@ -301,10 +377,12 @@ class Wall(Sprite):
                 else:
                     self.direction = random.choice(["left", "right", "up", "down"])
                 
+                # makes sure wall doesnt turn too often
                 if self.direction != old_direction:
                     if count % 3 != 0:
                         self.direction = old_direction
                 
+                # creates new wall based off direction
                 if self.direction == "left":                
                     x = prevx - 20
                 if self.direction == "right":                           
@@ -336,10 +414,16 @@ walls = pg.sprite.Group()
 
 
 # initialises snake head before anything else for simplicity
-snake_head = Snake_Segment("head", 0, WIDTH/2 + 10, HEIGHT/2 + 10, "right")
+snake_head = Snake_Segment("head", 0, WIDTH/2 + 10, HEIGHT/2 + 10, "right", "p1")
 all_sprites.add(snake_head)
 snake.add(snake_head)
 snake_segments.append(snake_head)
+
+# initialises snake head before anything else for simplicity
+snake_head2 = Snake_Segment("head", 0, WIDTH/2 + 10 - 40, HEIGHT/2 + 10, "left", "p2")
+all_sprites.add(snake_head2)
+snake.add(snake_head2)
+snake_segments2.append(snake_head2)
 
  
 if WALLS == True:  
@@ -401,7 +485,7 @@ while running:
                     spawny = -20
                 # print(spawnx, ",", spawny)
                 # spawns in the new segment with the correct coordinates and same direction as the last segment
-                segment = Snake_Segment("body", index, (snake_segments[index - 1].rect.center[0] + spawnx), (snake_segments[index - 1].rect.center[1]) + spawny, snake_segments[len(snake_segments) - 1].direction)
+                segment = Snake_Segment("body", index, (snake_segments[index - 1].rect.center[0] + spawnx), (snake_segments[index - 1].rect.center[1]) + spawny, snake_segments[len(snake_segments) - 1].direction, "p1")
                 # adds segment to all the sprite groups and the indexed list of snake segments
                 all_sprites.add(segment)
                 snake.add(segment)
@@ -411,6 +495,29 @@ while running:
                 spawnx = 0 
                 spawny = 0
                 SPAWN_QUEUE -= 1
+        if SPAWN_QUEUE2 != 0:
+            if len(snake_segments2) <= MAX_LEN:
+                # checks the direction of the last segment of the snake to provide coordinates for spawining in the new segment
+                if snake_segments2[len(snake_segments2) - 1].direction == "left":
+                    spawnx = 20
+                if snake_segments2[len(snake_segments2) - 1].direction == "right":
+                    spawnx = -20
+                if snake_segments2[len(snake_segments2) - 1].direction == "up":
+                    spawny = 20
+                if snake_segments2[len(snake_segments2) - 1].direction == "down":
+                    spawny = -20
+                # print(spawnx, ",", spawny)
+                # spawns in the new segment with the correct coordinates and same direction as the last segment
+                segment = Snake_Segment("body", index2, (snake_segments2[index2 - 1].rect.center[0] + spawnx), (snake_segments2[index2 - 1].rect.center[1]) + spawny, snake_segments2[len(snake_segments2) - 1].direction, "p2")
+                # adds segment to all the sprite groups and the indexed list of snake segments
+                all_sprites.add(segment)
+                snake.add(segment)
+                snake_segments2.append(segment)
+                index2 += 1
+                # resets the coordinates for the next run to avoid conflicts
+                spawnx = 0 
+                spawny = 0
+                SPAWN_QUEUE2 -= 1
                 
     
     # spawns new apple at random coordinates when the previous one is eaten
