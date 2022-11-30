@@ -23,6 +23,8 @@ SAFETY_FRAMES = 0
 WALLS = False
 AMOUNT_WALLS = 10
 WALL_LEN = 8
+MULTIPLAYER = True
+APPLE_AMOUNT = 5
 
 
 # define colors

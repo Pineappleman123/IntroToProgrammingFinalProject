@@ -78,7 +78,10 @@ class Snake_Segment(Sprite):
     def __init__(self, type, index, x, y, direction, player):
         Sprite.__init__(self)
         self.image = pg.Surface((20, 20))
-        self.image.fill(GREEN)
+        if player == "p1":
+            self.image.fill(GREEN)
+        if player == "p2":
+            self.image.fill(BLUE)
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.speed = SNAKE_SPEED
@@ -419,11 +422,12 @@ all_sprites.add(snake_head)
 snake.add(snake_head)
 snake_segments.append(snake_head)
 
-# initialises snake head before anything else for simplicity
-snake_head2 = Snake_Segment("head", 0, WIDTH/2 + 10 - 40, HEIGHT/2 + 10, "left", "p2")
-all_sprites.add(snake_head2)
-snake.add(snake_head2)
-snake_segments2.append(snake_head2)
+if MULTIPLAYER == True:
+    # initialises snake head before anything else for simplicity
+    snake_head2 = Snake_Segment("head", 0, WIDTH/2 + 10 - 40, HEIGHT/2 + 10, "left", "p2")
+    all_sprites.add(snake_head2)
+    snake.add(snake_head2)
+    snake_segments2.append(snake_head2)
 
  
 if WALLS == True:  
@@ -449,6 +453,7 @@ running = True
 gameover = False
 pause = False
 press = 1
+win = False
 while running:
     # keep the loop running using clock
     clock.tick(FPS)
@@ -521,7 +526,7 @@ while running:
                 
     
     # spawns new apple at random coordinates when the previous one is eaten
-    if len(apples) <= 0:
+    if len(apples) <= APPLE_AMOUNT:
         x = random.randint(0, WIDTH/20 - 1) * 20 + 10
         y = random.randint(0, HEIGHT/20 - 1) * 20 + 10
         apple = Apple(x, y)
@@ -531,29 +536,50 @@ while running:
     
         
     print(len(walls))   
-
-    # checks if the snake's head collides with the body and subtracts one life
-    hits = pg.sprite.spritecollide(snake_head, snake, False)
-    if len(hits) == 2:
-        LIVES -= 1
     
-    ############ Update ##############
-    # update all sprites
-    # for segment in snake_segments:
-    #     segment.update()
-    # updates sprites while game is not over or paused
-    if gameover == False and pause == False:
-        all_sprites.update()
-    # if FRAME % SNAKE_SPEED == 0:
-    #     count += 1
-    if SAFETY_FRAMES > 0:
-        SAFETY_FRAMES -= 1
     ############ Draw ################
     # draw the background screen
     screen.fill(BLACK)
     # screen.blit(background, background_rect)
     # draw all sprites
     all_sprites.draw(screen)
+
+    if MULTIPLAYER == False:
+        # checks if the snake's head collides with the body and subtracts one life
+        hits = pg.sprite.spritecollide(snake_head, snake, False)
+        if len(hits) == 2:
+            LIVES -= 1
+    else:
+        hits = pg.sprite.spritecollide(snake_head, snake, False)
+        hits1 = pg.sprite.spritecollide(snake_head2, snake, False)
+        if len(hits) == 2:
+            if hits[1].player == "p2":
+                draw_text("PLAYER 2 WINS", 144, BLUE, WIDTH / 2, HEIGHT / 2)
+                win = True
+        if len(hits1) == 2:
+            if hits1[1].player == "p1":
+                draw_text("PLAYER 1 WINS", 144, GREEN, WIDTH / 2, HEIGHT / 2)
+                win = True
+                
+        
+    
+    ############ Update ##############
+    # update all sprites
+    # for segment in snake_segments:
+    #     segment.update()
+    if MULTIPLAYER == False:
+        # updates sprites while game is not over or paused
+        if gameover == False and pause == False:
+            all_sprites.update()
+    else:
+        if win != True:
+            all_sprites.update()
+        
+    # if FRAME % SNAKE_SPEED == 0:
+    #     count += 1
+    if SAFETY_FRAMES > 0:
+        SAFETY_FRAMES -= 1
+    
     
     # draw score and lives on screen
     draw_text("POINTS: " + str(SCORE), 22, WHITE, WIDTH / 2, HEIGHT / 24)
