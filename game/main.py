@@ -64,6 +64,9 @@ wall_list = []
 index = 1
 index2 = 1
 
+namep1 = "P1"
+namep2 = "P2"
+
 # xdir = random.choice(["left", "right"])
 # ydir = random.choice(["up", "down"])
 
@@ -554,11 +557,11 @@ while running:
         hits1 = pg.sprite.spritecollide(snake_head2, snake, False)
         if len(hits) == 2:
             if hits[1].player == "p2":
-                draw_text("PLAYER 2 WINS", 144, BLUE, WIDTH / 2, HEIGHT / 2)
+                draw_text(namep2 + " WINS", 144, BLUE, WIDTH / 2, HEIGHT / 2)
                 win = True
         if len(hits1) == 2:
             if hits1[1].player == "p1":
-                draw_text("PLAYER 1 WINS", 144, GREEN, WIDTH / 2, HEIGHT / 2)
+                draw_text(namep1 + " WINS", 144, GREEN, WIDTH / 2, HEIGHT / 2)
                 win = True
                 
         
@@ -591,6 +594,9 @@ while running:
     draw_text("HISCORE: " + str(hiscore_print), 22, WHITE, WIDTH / 2 + 450, HEIGHT / 24)
     if pause == True:
         draw_text("GAME PAUSED", 144, WHITE, WIDTH / 2, HEIGHT / 2)
+        
+    draw_text(namep1, 20, WHITE, snake_head.rect.x + 45, snake_head.rect.y)
+    draw_text(namep2, 20, WHITE, snake_head2.rect.x + 45, snake_head2.rect.y)
     
         
     # check if you lose
