@@ -328,10 +328,10 @@ class Apple(Sprite):
                     # adds one to score and kills apple    
                     SCORE += 1
                     # levels that progress in difficulty
-                    if SNAKE_SPEED > 3:
-                        if LEVEL * 5 - SCORE == 0:
-                            SNAKE_SPEED -= 1
-                            LEVEL += 1
+                    # if SNAKE_SPEED > 3:
+                    #     if LEVEL * 5 - SCORE == 0:
+                    #         SNAKE_SPEED -= 1
+                    #         LEVEL += 1
                     # xdir = random.choice(["left", "right"])
                     # ydir = random.choice(["up", "down"])
                     apple_list.remove(self)

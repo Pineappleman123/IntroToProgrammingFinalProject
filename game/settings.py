@@ -1,7 +1,7 @@
 # game settings 
 WIDTH = 1280
 HEIGHT = 720
-FPS = 30
+FPS = 60
 FRAME = 1
 
 # player settings
@@ -13,7 +13,7 @@ FRAME = 1
 
 
 
-SNAKE_SPEED = 3
+SNAKE_SPEED = 6
 SCORE = 0
 LENGTH_PER_APPLE = 1
 MAX_LEN = 20
