@@ -212,7 +212,7 @@ class Snake_Segment(Sprite):
                                     SAFETY_FRAMES += SNAKE_SPEED * 10
                     
                     if SAFETY_FRAMES == 0:   
-                        if self.rect.x == apple_list[0].rect.x:
+                        if self.rect.x == apple_list[random.randint(0,len(apple_list) - 1)].rect.x:
                             if apple_list[0].rect.y < self.rect.y:                         
                                 if self.direction != "down":
                                     self.direction = "up"
@@ -315,10 +315,10 @@ class Apple(Sprite):
                     # adds one to score and kills apple    
                     SCORE += 1
                     # levels that progress in difficulty
-                    if SNAKE_SPEED > 3:
-                        if LEVEL * 5 - SCORE == 0:
-                            SNAKE_SPEED -= 1
-                            LEVEL += 1
+                    # if SNAKE_SPEED > 3:
+                    #     if LEVEL * 5 - SCORE == 0:
+                    #         SNAKE_SPEED -= 1
+                    #         LEVEL += 1
                     # xdir = random.choice(["left", "right"])
                     # ydir = random.choice(["up", "down"])
                     apple_list.remove(self)
@@ -537,8 +537,6 @@ while running:
         all_sprites.add(apple)
         apple_list.append(apple)
     
-        
-    print(len(walls))   
     
     ############ Draw ################
     # draw the background screen
