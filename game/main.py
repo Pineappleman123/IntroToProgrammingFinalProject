@@ -594,7 +594,8 @@ while running:
         draw_text("GAME PAUSED", 144, WHITE, WIDTH / 2, HEIGHT / 2)
         
     draw_text(namep1, 20, WHITE, snake_head.rect.x + 45, snake_head.rect.y)
-    draw_text(namep2, 20, WHITE, snake_head2.rect.x + 45, snake_head2.rect.y)
+    if MULTIPLAYER == True:
+        draw_text(namep2, 20, WHITE, snake_head2.rect.x + 45, snake_head2.rect.y)
     
         
     # check if you lose
