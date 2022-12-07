@@ -3,7 +3,7 @@
 # sprites from https://opengameart.org/content/space-shooter-redux
 # my dad helped with some movement logic and helped fix movement bugs
 '''
-My final project is the snake game
+My final project is the snake game with multiplayer and walls, and possible player vs snake mode
 '''
 
 
@@ -13,6 +13,8 @@ from pygame.sprite import Sprite
 # import built in libraries
 import random
 from os import path
+import math
+import time
 # import created libraries
 from settings import *
 
@@ -47,14 +49,6 @@ def draw_text(text, size, color, x, y):
 def colorbyte():
     return random.randint(0,255)
 
-# get images for sprites and assign to variables
-# background = pg.image.load(path.join(img_dir1, 'black.png')).convert()
-# background = pg.transform.scale(background, (WIDTH, HEIGHT))
-# background_rect = background.get_rect()
-# player_img = pg.image.load(path.join(img_dir1, "playerShip1_orange.png")).convert()
-# enemy_img = pg.image.load(path.join(img_dir1, "enemyGreen3.png")).convert()
-# bullet_img = pg.image.load(path.join(img_dir1, "laserRed16.png")).convert()
-# boss_img = pg.image.load(path.join(img_dir1, "enemyBlue2.png")).convert()
 
 # this list is very important as it stores all data for each snake segment in an easily accessible indexed list
 snake_segments = []
@@ -67,8 +61,8 @@ index2 = 1
 namep1 = "P1"
 namep2 = "P2"
 
-# xdir = random.choice(["left", "right"])
-# ydir = random.choice(["up", "down"])
+mx = 0
+my = 0
 
 # variables for coordinates of new spawned segment after apple is eaten      
 spawnx = 0 
@@ -94,7 +88,7 @@ class Snake_Segment(Sprite):
         self.next_direction = ""
         self.change_direction = False
         self.no_update = False
-        self.ai = False
+        self.ai = True
         self.x = x
         self.y = y
         self.player = player
@@ -226,6 +220,23 @@ class Snake_Segment(Sprite):
                             if apple_list[0].rect.x > self.rect.x: 
                                 if self.direction != "left":
                                     self.direction = "right"
+                        
+                        if PVE == True:
+                            if self.rect.x == player.rect.x:
+                                if player.rect.y < self.rect.y:                         
+                                    if self.direction != "down":
+                                        self.direction = "up"
+                                if player.rect.y > self.rect.y: 
+                                    if self.direction != "up": 
+                                        self.direction = "down"
+                            if self.rect.y == player.rect.y:
+                                if player.rect.x < self.rect.x: 
+                                    if self.direction != "right":
+                                        self.direction = "left"
+                                if player.rect.x > self.rect.x: 
+                                    if self.direction != "left":
+                                        self.direction = "right"
+                            
                     
     def update(self):
         global LIVES, SPAWN_QUEUE, spawnx, spawny, MAX_LEN, index
@@ -258,6 +269,7 @@ class Snake_Segment(Sprite):
                     self.rect.y += 20
         if self.player == "p2":
             # if direction is already set
+            
             if FRAME % SNAKE_SPEED == 0:
                 # movement instructions for the body segments
                 if self.type == "body":
@@ -292,8 +304,130 @@ class Snake_Segment(Sprite):
             self.rect.y = HEIGHT - 20
         elif self.rect.y > HEIGHT:
             self.rect.y = 0
-            
+ 
+          
+class Bullet(Sprite):
+    def __init__(self, x, y, color, w, h, angle, side):
+        Sprite.__init__(self)
+        self.x = x
+        self.y = y
+        self.color = color
+        self.w = w
+        self.h = h
+        self.image = pg.Surface((self.w, self.h))
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.rect.center = (self.x, self.y)
+        self.pos = vec(self.x, self.y)
+        # self.movey = movey
+        # self.movex = movex
+        self.velocity = 10
+        self.side = side
+        self.timer = 0
+        self.velocity = vec(0, 0)
+        self.last_update_time = time.time()
+        self.angle = angle
+        self.speed = 500
         
+    # collisions of bullet with enemy/player/boss and movement
+    def update(self):
+        global SCORE, player_bullets, snake_segments, index
+        # self.rect.y += self.movey
+        # self.rect.x += self.movex
+        
+        angle = math.radians(self.angle)
+        self.velocity.x = math.cos(angle) * self.speed
+        self.velocity.y = math.sin(angle) * self.speed
+        
+        timedelta = time.time() - self.last_update_time
+        self.last_update_time = time.time()
+        self.pos += self.velocity * timedelta
+        self.rect.center = self.pos
+        # self.pos += self.vel
+        # self.rect.center = self.pos
+        
+        # player bullets
+        if self.side == "player":
+            hits = pg.sprite.spritecollide(self, snake, False)
+            if hits:
+                SCORE += 1
+                self.kill()
+                player_bullets -= 1
+                snake_segments[len(snake_segments) - 1].kill()
+                snake_segments.remove(snake_segments[len(snake_segments) - 1])
+                index -= 1
+        
+        # kill bullet after timer ends to conserve memory
+        if self.timer >= 150:
+            self.kill()
+            if self.side == "player":
+                player_bullets -= 1
+            else:
+                pass
+        self.timer += 1     
+        
+player_bullets = 0
+# player class
+class Player(Sprite):
+    def __init__(self):
+        # defines player sprite parameters
+        Sprite.__init__(self)
+        self.image = pg.Surface((20, 20))
+        self.image.fill(GREY)
+        self.rect = self.image.get_rect()
+        self.rect.center = (WIDTH/2 + 10 - 200, HEIGHT/2 + 10)
+        self.pos = vec(WIDTH/2, HEIGHT-10)
+        self.vel = vec(0,0)
+        self.acc = vec(0,0)
+    # what happens when a key gets pressed: horizontal movement and shooting
+    def controls(self):
+        global player_bullets
+        keys = pg.key.get_pressed()
+        if keys[pg.K_a]:
+            if FRAME % SNAKE_SPEED == 0:
+                self.rect.x -= 20
+            # self.acc.x = -1
+            # print(self.vel)
+        if keys[pg.K_d]:
+            if FRAME % SNAKE_SPEED == 0:
+                self.rect.x += 20
+            # self.acc.x = 1
+        if keys[pg.K_w]:
+            if FRAME % SNAKE_SPEED == 0:
+                self.rect.y -= 20
+            # self.acc.y = -1
+            # print(self.vel)
+        if keys[pg.K_s]:
+            if FRAME % SNAKE_SPEED == 0:
+                self.rect.y += 20
+            # self.acc.y = 1  
+        
+    # shoot function creates a bullet at player coordinates
+    def shoot(self):
+        global player_bullets, mx, my
+        x = self.rect.x + 10
+        y = self.rect.y + 10
+        angle = math.degrees(math.atan2((my - y), (mx - x)))
+        e = Bullet(x, y, RED, 5, 5, angle, "player")
+        all_sprites.add(e)
+        bullets.add(e)
+        player_bullets += 1
+    # updating all movement and acceleration and gravity
+    def update(self):
+        global LIVES
+        
+        # self.acc = vec(0, 0)
+        self.controls()
+        # self.acc.x += self.vel.x * -0.3
+        # self.acc.y += self.vel.y * -0.3
+        # self.vel += self.acc
+        # self.pos += self.vel + 0.5 * self.acc
+        # self.rect.midbottom = self.pos   
+        
+        hits = pg.sprite.spritecollide(self, snake, False)
+        if hits:
+            self.kill() 
+            LIVES -= 1        
           
 # apple class
 class Apple(Sprite):
@@ -417,6 +551,11 @@ all_sprites = pg.sprite.Group()
 apples = pg.sprite.Group()
 snake = pg.sprite.Group()
 walls = pg.sprite.Group()
+bullets = pg.sprite.Group()
+
+
+player = Player()
+all_sprites.add(player)
 
 
 # initialises snake head before anything else for simplicity
@@ -431,6 +570,7 @@ if MULTIPLAYER == True:
     all_sprites.add(snake_head2)
     snake.add(snake_head2)
     snake_segments2.append(snake_head2)
+
 
  
 if WALLS == True:  
@@ -467,6 +607,11 @@ while running:
         if event.type == pg.QUIT:
             running = False
         
+        if event.type == pg.MOUSEBUTTONUP:
+            mx, my = pg.mouse.get_pos()
+            player.shoot()
+            print(mx, my)
+        
         # checks if key to pause game has been pressed
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_p:
@@ -492,7 +637,7 @@ while running:
                 if snake_segments[len(snake_segments) - 1].direction == "down":
                     spawny = -20
                 # print(spawnx, ",", spawny)
-                # spawns in the new segment with the correct coordinates and same direction as the last segment
+                # spawns in the  new segment with the correct coordinates and same direction as the last segment
                 segment = Snake_Segment("body", index, (snake_segments[index - 1].rect.center[0] + spawnx), (snake_segments[index - 1].rect.center[1]) + spawny, snake_segments[len(snake_segments) - 1].direction, "p1")
                 # adds segment to all the sprite groups and the indexed list of snake segments
                 all_sprites.add(segment)
@@ -602,6 +747,11 @@ while running:
     if LIVES <= 0:    
         draw_text("GAME OVER", 144, RED, WIDTH / 2, HEIGHT / 2)
         gameover = True
+        
+    if PVE == True:
+        if len(snake) == 0:
+            draw_text("YOU WIN", 144, GREEN, WIDTH / 2, HEIGHT / 2)
+            
 
     # buffer - after drawing everything, flip display
     pg.display.flip()

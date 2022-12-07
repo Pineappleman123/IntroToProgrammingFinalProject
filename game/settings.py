@@ -11,7 +11,7 @@ FRAME = 1
 # ENEMY_HP = 1
 
 
-
+PLAYER_FIRERATE = 30
 
 SNAKE_SPEED = 6
 SCORE = 0
@@ -24,7 +24,8 @@ WALLS = False
 AMOUNT_WALLS = 10
 WALL_LEN = 8
 MULTIPLAYER = False
-APPLE_AMOUNT = 5
+PVE = True
+APPLE_AMOUNT = 1
 
 
 # define colors
