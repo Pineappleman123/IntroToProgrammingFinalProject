@@ -557,6 +557,8 @@ bullets = pg.sprite.Group()
 player = Player()
 all_sprites.add(player)
 
+if PVE == True:
+    SPAWN_QUEUE = 5
 
 # initialises snake head before anything else for simplicity
 snake_head = Snake_Segment("head", 0, WIDTH/2 + 10, HEIGHT/2 + 10, "right", "p1")
