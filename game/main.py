@@ -57,6 +57,7 @@ apple_list = []
 wall_list = []
 index = 1
 index2 = 1
+final_indx = 0
 
 namep1 = "P1"
 namep2 = "P2"
@@ -93,7 +94,7 @@ class Snake_Segment(Sprite):
         self.y = y
         self.player = player
     def controls(self):
-        global direction, SAFETY_FRAMES
+        global direction, SAFETY_FRAMES, final_indx, prioritize
         keys = pg.key.get_pressed()
         # sets initial key press to outside variable so that multiple keypressess will not be registered before updating snake
         if self.player == "p1":
@@ -205,37 +206,57 @@ class Snake_Segment(Sprite):
                                     self.direction = random.choice(["up", "down"])
                                     SAFETY_FRAMES += SNAKE_SPEED * 10
                     
-                    if SAFETY_FRAMES == 0:   
-                        if self.rect.x == apple_list[random.randint(0,len(apple_list) - 1)].rect.x:
-                            if apple_list[0].rect.y < self.rect.y:                         
-                                if self.direction != "down":
-                                    self.direction = "up"
-                            if apple_list[0].rect.y > self.rect.y: 
-                                if self.direction != "up": 
-                                    self.direction = "down"
-                        if self.rect.y == apple_list[0].rect.y:
-                            if apple_list[0].rect.x < self.rect.x: 
-                                if self.direction != "right":
-                                    self.direction = "left"
-                            if apple_list[0].rect.x > self.rect.x: 
-                                if self.direction != "left":
-                                    self.direction = "right"
+                    initial_dist = math.sqrt((apple_list[0].rect.x - self.rect.x)**2 + (apple_list[0].rect.y - self.rect.y)**2)
+                    indx = 0
+                    final_indx = 0
+                    for apple in apple_list:
+                        dist = math.sqrt((apple.rect.x - self.rect.x)**2 + (apple.rect.y - self.rect.y)**2)
+                        if dist < initial_dist:
+                            initial_dist = dist
+                            final_indx = indx
+                        indx += 1
                         
-                        if PVE == True:
-                            if self.rect.x == player.rect.x:
-                                if player.rect.y < self.rect.y:                         
+                    if PVE == True:
+                        if math.sqrt((apple_list[final_indx].rect.x - self.rect.x)**2 + (apple_list[final_indx].rect.y - self.rect.y)**2) * PLAYER_PRIORITY < math.sqrt((player.rect.x - self.rect.x)**2 + (player.rect.y - self.rect.y)**2):
+                            prioritize = False
+                        else:
+                            prioritize = True
+                    else: 
+                        prioritize = False
+                    
+                    if SAFETY_FRAMES == 0:  
+                        if prioritize == False: 
+                            if self.rect.x == apple_list[final_indx].rect.x:
+                                if apple_list[final_indx].rect.y < self.rect.y:                         
                                     if self.direction != "down":
                                         self.direction = "up"
-                                if player.rect.y > self.rect.y: 
+                                if apple_list[final_indx].rect.y > self.rect.y: 
                                     if self.direction != "up": 
                                         self.direction = "down"
-                            if self.rect.y == player.rect.y:
-                                if player.rect.x < self.rect.x: 
+                            if self.rect.y == apple_list[final_indx].rect.y:
+                                if apple_list[final_indx].rect.x < self.rect.x: 
                                     if self.direction != "right":
                                         self.direction = "left"
-                                if player.rect.x > self.rect.x: 
+                                if apple_list[final_indx].rect.x > self.rect.x: 
                                     if self.direction != "left":
                                         self.direction = "right"
+                            
+                        if PVE == True:
+                            if prioritize == True:
+                                if self.rect.x == player.rect.x:
+                                    if player.rect.y < self.rect.y:                         
+                                        if self.direction != "down":
+                                            self.direction = "up"
+                                    if player.rect.y > self.rect.y: 
+                                        if self.direction != "up": 
+                                            self.direction = "down"
+                                if self.rect.y == player.rect.y:
+                                    if player.rect.x < self.rect.x: 
+                                        if self.direction != "right":
+                                            self.direction = "left"
+                                    if player.rect.x > self.rect.x: 
+                                        if self.direction != "left":
+                                            self.direction = "right"
                             
                     
     def update(self):
@@ -384,21 +405,21 @@ class Player(Sprite):
         global player_bullets
         keys = pg.key.get_pressed()
         if keys[pg.K_a]:
-            if FRAME % SNAKE_SPEED == 0:
+            if FRAME % PLAYER_SPEED == 0:
                 self.rect.x -= 20
             # self.acc.x = -1
             # print(self.vel)
         if keys[pg.K_d]:
-            if FRAME % SNAKE_SPEED == 0:
+            if FRAME % PLAYER_SPEED == 0:
                 self.rect.x += 20
             # self.acc.x = 1
         if keys[pg.K_w]:
-            if FRAME % SNAKE_SPEED == 0:
+            if FRAME % PLAYER_SPEED == 0:
                 self.rect.y -= 20
             # self.acc.y = -1
             # print(self.vel)
         if keys[pg.K_s]:
-            if FRAME % SNAKE_SPEED == 0:
+            if FRAME % PLAYER_SPEED == 0:
                 self.rect.y += 20
             # self.acc.y = 1  
         
@@ -553,9 +574,9 @@ snake = pg.sprite.Group()
 walls = pg.sprite.Group()
 bullets = pg.sprite.Group()
 
-
-player = Player()
-all_sprites.add(player)
+if PVE == True:
+    player = Player()
+    all_sprites.add(player)
 
 if PVE == True:
     SPAWN_QUEUE = 5
@@ -676,7 +697,7 @@ while running:
                 
     
     # spawns new apple at random coordinates when the previous one is eaten
-    if len(apples) <= APPLE_AMOUNT:
+    if len(apples) < APPLE_AMOUNT:
         x = random.randint(0, WIDTH/20 - 1) * 20 + 10
         y = random.randint(0, HEIGHT/20 - 1) * 20 + 10
         apple = Apple(x, y)
@@ -722,7 +743,16 @@ while running:
     else:
         if win != True:
             all_sprites.update()
-        
+    
+    if DEBUG == True:        
+        try:
+            if prioritize == False:
+                pg.draw.line(screen, BLUE, (snake_head.rect.x + 10, snake_head.rect.y + 10), (apple_list[final_indx].rect.x + 10, apple_list[final_indx].rect.y + 10), 2)
+            if PVE == True:
+                if prioritize == True:
+                    pg.draw.line(screen, RED, (snake_head.rect.x + 10, snake_head.rect.y + 10), (player.rect.x + 10, player.rect.y + 10), 2)
+        except:
+            pass
     # if FRAME % SNAKE_SPEED == 0:
     #     count += 1
     if SAFETY_FRAMES > 0:
@@ -744,7 +774,11 @@ while running:
     if MULTIPLAYER == True:
         draw_text(namep2, 20, WHITE, snake_head2.rect.x + 45, snake_head2.rect.y)
     
-        
+    if DEBUG == True:
+        indx = 0
+        for apple in apple_list:
+            draw_text(str(indx), 20, WHITE, apple.rect.x, apple.rect.y)
+            indx += 1
     # check if you lose
     if LIVES <= 0:    
         draw_text("GAME OVER", 144, RED, WIDTH / 2, HEIGHT / 2)
