@@ -5,7 +5,7 @@ Using pygame to make a snake game
 
 ## Description
 
-A top down 2d game with a controllable snake that eats apples. Includes multiplayer vs mode, and automatically controlled ai mode.
+A top down 2d game with a controllable snake that eats apples. Includes multiplayer vs mode, player vs snake mode, and automatically controlled ai mode.
 
 ## Getting Started
 
