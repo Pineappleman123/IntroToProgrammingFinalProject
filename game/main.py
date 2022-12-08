@@ -3,7 +3,7 @@
 # sprites from https://opengameart.org/content/space-shooter-redux
 # my dad helped with some movement logic and helped fix movement bugs
 '''
-My final project is the snake game with multiplayer and walls, and possible player vs snake mode
+My final project is the snake game with multiplayer and walls, and player vs snake mode
 '''
 
 
@@ -429,6 +429,7 @@ class Player(Sprite):
         x = self.rect.x + 10
         y = self.rect.y + 10
         angle = math.degrees(math.atan2((my - y), (mx - x)))
+        angle += random.randint(-BULLET_SPREAD, BULLET_SPREAD)
         e = Bullet(x, y, RED, 5, 5, angle, "player")
         all_sprites.add(e)
         bullets.add(e)
