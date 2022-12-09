@@ -15,9 +15,63 @@ import random
 from os import path
 import math
 import time
+import tkinter as tk
+from tkinter import simpledialog
 # import created libraries
 from settings import *
+import settings
 
+# tkinter to edit settings as user desires
+# create a Tkinter window
+root = tk.Tk()
+
+# define a function for updating the settings
+def update_settings():
+    # create a new Toplevel window
+    window = tk.Toplevel(root)
+    window.geometry("400x800")
+
+    # create a frame for the input fields
+    frame = tk.Frame(window)
+    frame.pack()
+
+    # iterate over the variables in the external settings file
+    for i, (var_name, var_value) in enumerate(settings.__dict__.items()):
+        # check if the variable is not a private attribute
+        if not var_name.startswith("_"):
+            # create a label for the variable
+            label = tk.Label(frame, text=var_name)
+            label.grid(row=i, column=0)
+
+            # create an input field for the variable
+            entry = tk.Entry(frame)
+            entry.grid(row=i, column=1)
+
+            # set the initial value of the input field
+            entry.insert(0, str(var_value))
+
+            # define a function for updating the variable
+            def update_variable():
+                # get the new value from the input field
+                new_value = entry.get()
+
+                # compare the old and new values
+                if new_value != var_value:
+                    # update the variable in the external settings file
+                    setattr(settings, var_name, new_value)
+
+            # create a button for updating the variable
+            button = tk.Button(frame, text="Update", command=update_variable)
+            button.grid(row=i, column=2)
+
+# create a button for updating the settings
+button = tk.Button(root, text="Update Settings", command=update_settings)
+button.pack()
+
+# start the Tkinter event loop
+root.mainloop()
+
+root.quit()
 
 # vectors
 vec = pg.math.Vector2
