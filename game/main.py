@@ -429,7 +429,7 @@ class Player(Sprite):
         x = self.rect.x + 10
         y = self.rect.y + 10
         angle = math.degrees(math.atan2((my - y), (mx - x)))
-        angle += random.randint(-BULLET_SPREAD, BULLET_SPREAD)
+        angle += random.randint(-BULLET_SPREAD, BULLET_SPREAD)/2
         e = Bullet(x, y, RED, 5, 5, angle, "player")
         all_sprites.add(e)
         bullets.add(e)
@@ -631,11 +631,19 @@ while running:
         if event.type == pg.QUIT:
             running = False
         
-        if event.type == pg.MOUSEBUTTONUP:
-            mx, my = pg.mouse.get_pos()
-            player.shoot()
-            print(mx, my)
-        
+        if RAPID_FIRE == False:
+            if event.type == pg.MOUSEBUTTONUP:
+                mx, my = pg.mouse.get_pos()
+                player.shoot()
+                print(mx, my)
+         
+    if RAPID_FIRE == True:
+        if FRAME % PLAYER_FIRERATE == 0:   
+            if pg.mouse.get_pressed()[0]:
+                mx, my = pg.mouse.get_pos()
+                player.shoot()
+                # print(mx, my)
+    
         # checks if key to pause game has been pressed
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_p:
