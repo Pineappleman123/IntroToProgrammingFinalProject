@@ -35,6 +35,7 @@ def update_settings():
     frame = tk.Frame(window)
     frame.pack()
 
+    vars = {}
     # iterate over the variables in the external settings file
     for i, (var_name, var_value) in enumerate(settings.__dict__.items()):
         # check if the variable is not a private attribute
@@ -44,21 +45,23 @@ def update_settings():
             label.grid(row=i, column=0)
 
             # create an input field for the variable
-            entry = tk.Entry(frame)
-            entry.grid(row=i, column=1)
+            vars["entry" + str(i)] = tk.Entry(frame)
+            vars["entry" + str(i)].grid(row=i, column=1)
 
             # set the initial value of the input field
-            entry.insert(0, str(var_value))
+            vars["entry" + str(i)].insert(0, str(var_value))
 
             # define a function for updating the variable
             def update_variable():
                 # get the new value from the input field
-                new_value = entry.get()
+                new_value = vars["entry" + str(i)].get()
 
                 # compare the old and new values
                 if new_value != var_value:
                     # update the variable in the external settings file
                     setattr(settings, var_name, new_value)
+                    print(var_name)
+                    print(vars)
 
             # create a button for updating the variable
             button = tk.Button(frame, text="Update", command=update_variable)
@@ -71,7 +74,7 @@ button.pack()
 # start the Tkinter event loop
 root.mainloop()
 
-root.quit()
+
 
 # vectors
 vec = pg.math.Vector2
@@ -861,3 +864,4 @@ if SCORE > hiscore_print:
     hiscore.write(str(SCORE))
 hiscore.close()
 pg.quit()
+root.quit()
