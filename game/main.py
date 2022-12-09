@@ -2,6 +2,8 @@
 # some content from kids can code: http://kidscancode.org/blog/ (collision, movement, sprites)
 # sprites from https://opengameart.org/content/space-shooter-redux
 # my dad helped with some movement logic and helped fix movement bugs
+# https://www.geeksforgeeks.org/exec-in-python/
+# https://www.tutorialspoint.com/determine-which-button-was-pressed-in-tkinter
 '''
 My final project is the snake game with multiplayer and walls, and player vs snake mode
 '''
@@ -18,7 +20,6 @@ import time
 import tkinter as tk
 from tkinter import simpledialog
 # import created libraries
-from settings import *
 import settings
 
 # tkinter to edit settings as user desires
@@ -34,15 +35,17 @@ def update_settings():
     # create a frame for the input fields
     frame = tk.Frame(window)
     frame.pack()
-
+    
     vars = {}
+    labels = {}
+    # buttons = {}
     # iterate over the variables in the external settings file
     for i, (var_name, var_value) in enumerate(settings.__dict__.items()):
         # check if the variable is not a private attribute
         if not var_name.startswith("_"):
             # create a label for the variable
-            label = tk.Label(frame, text=var_name)
-            label.grid(row=i, column=0)
+            labels["label" + str(i)] = tk.Label(frame, text=var_name)
+            labels["label" + str(i)].grid(row=i, column=0)
 
             # create an input field for the variable
             vars["entry" + str(i)] = tk.Entry(frame)
@@ -50,21 +53,27 @@ def update_settings():
 
             # set the initial value of the input field
             vars["entry" + str(i)].insert(0, str(var_value))
-
+            
+            
             # define a function for updating the variable
-            def update_variable():
+            def update_variable(t):
                 # get the new value from the input field
-                new_value = vars["entry" + str(i)].get()
-
+                var_name = labels["label" + str(t)].cget("text")
+                new_value = vars["entry" + str(t)].get()
+                print(t)
+                print(vars["entry" + str(t)].get())
+                
                 # compare the old and new values
                 if new_value != var_value:
                     # update the variable in the external settings file
-                    setattr(settings, var_name, new_value)
+                    if new_value == "True" or new_value == "False":
+                        setattr(settings, var_name, (new_value == "True"))
+                    else:
+                        setattr(settings, var_name, new_value)
                     print(var_name)
-                    print(vars)
 
             # create a button for updating the variable
-            button = tk.Button(frame, text="Update", command=update_variable)
+            button = tk.Button(frame, text="Update", command = lambda t = str(i): update_variable(t))
             button.grid(row=i, column=2)
 
 # create a button for updating the settings
@@ -74,8 +83,10 @@ button.pack()
 # start the Tkinter event loop
 root.mainloop()
 
+from settings import *
 
-
+print(RAPID_FIRE)
+print(type(RAPID_FIRE))
 # vectors
 vec = pg.math.Vector2
 

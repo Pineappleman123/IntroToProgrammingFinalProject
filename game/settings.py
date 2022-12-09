@@ -1,14 +1,9 @@
-# game settings 
+
 WIDTH = 1280
 HEIGHT = 720
 FPS = 60
 FRAME = 1
 
-# player settings
-# PLAYER_GRAVITY = 0.8
-# less = faster
-# ENEMY_FIRERATE = 10000 #10000 default
-# ENEMY_HP = 1
 
 
 PLAYER_FIRERATE = 1
@@ -34,7 +29,7 @@ PLAYER_PRIORITY = 1.5
 
 
 
-# define colors
+
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -43,7 +38,7 @@ BLUE = (0, 0, 255)
 YELLOW = (225, 225, 0)
 GREY = (192, 192, 192)
 
-# score
+
 SCORE = 0
 LIVES = 1
 LEVEL = 1
