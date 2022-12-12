@@ -13,15 +13,17 @@ My final project is the snake game with multiplayer and walls, and player vs sna
 
 
 # import external libraries and modules
+# pygame for game
 import pygame as pg
 from pygame.sprite import Sprite
 # import built in libraries
 import random
-from os import path
+# math for trigonometry
 import math
+# time for constant movement updates
 import time
+# tkinter for settings menu
 import tkinter as tk
-from tkinter import simpledialog
 # import created libraries
 import settings
 
