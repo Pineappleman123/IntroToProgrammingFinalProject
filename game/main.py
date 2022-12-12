@@ -1,10 +1,11 @@
 ### Citations ###
-# some content from kids can code: http://kidscancode.org/blog/ (collision, movement, sprites)
+# some content from kids can code: http://kidscancode.org/blog/ (collision, movement, sprites)a
 # my dad helped with some movement logic and helped fix movement bugs
 # https://www.geeksforgeeks.org/exec-in-python/
 # https://www.tutorialspoint.com/determine-which-button-was-pressed-in-tkinter
 # https://stackoverflow.com/questions/715417/converting-from-a-string-to-boolean-in-python
 # https://www.geeksforgeeks.org/enumerate-in-python/
+# https://www.w3schools.com/python/ref_string_isnumeric.asp
 '''
 My final project is the snake game with multiplayer and walls, and player vs snake mode
 '''
@@ -70,7 +71,10 @@ def update_settings():
                     if new_value == "True" or new_value == "False":
                         setattr(settings, var_name, (new_value == "True"))
                     else:
-                        setattr(settings, var_name, new_value)
+                        if new_value.isnumeric() == True:
+                            setattr(settings, var_name, int(new_value))
+                        else: 
+                            setattr(settings, var_name, new_value)
                     print(var_name)
 
             # create a button for updating the variable
