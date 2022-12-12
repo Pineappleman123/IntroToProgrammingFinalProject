@@ -1,6 +1,5 @@
 ### Citations ###
 # some content from kids can code: http://kidscancode.org/blog/ (collision, movement, sprites)
-# sprites from https://opengameart.org/content/space-shooter-redux
 # my dad helped with some movement logic and helped fix movement bugs
 # https://www.geeksforgeeks.org/exec-in-python/
 # https://www.tutorialspoint.com/determine-which-button-was-pressed-in-tkinter
