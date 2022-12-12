@@ -4,6 +4,8 @@
 # my dad helped with some movement logic and helped fix movement bugs
 # https://www.geeksforgeeks.org/exec-in-python/
 # https://www.tutorialspoint.com/determine-which-button-was-pressed-in-tkinter
+# https://stackoverflow.com/questions/715417/converting-from-a-string-to-boolean-in-python
+# https://www.geeksforgeeks.org/enumerate-in-python/
 '''
 My final project is the snake game with multiplayer and walls, and player vs snake mode
 '''
