@@ -1,3 +1,5 @@
+# Game by Andrew Perevoztchikov
+
 ### Citations ###
 # some content from kids can code: http://kidscancode.org/blog/ (collision, movement, sprites)a
 # my dad helped with some movement logic and helped fix movement bugs
