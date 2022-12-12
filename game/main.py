@@ -69,6 +69,7 @@ def update_settings():
                 # compare the old and new values
                 if new_value != var_value:
                     # update the variable in the external settings file
+                    # the if statements are to check for seperate data types and make sure they are correct when th variable is updated
                     if new_value == "True" or new_value == "False":
                         setattr(settings, var_name, (new_value == "True"))
                     else:
@@ -85,17 +86,17 @@ def update_settings():
 # create a button for updating the settings
 button = tk.Button(root, text="Update Settings", command=update_settings)
 button.pack()
-# create a button for updating the settings
+# create a button for canceling updating the settings
 button1 = tk.Button(root, text="Cancel", command=root.destroy)
 button1.pack()
 
 # start the Tkinter event loop
 root.mainloop()
 
+# importing settings variables after update
 from settings import *
 
-print(RAPID_FIRE)
-print(type(RAPID_FIRE))
+
 # vectors
 vec = pg.math.Vector2
 
@@ -417,8 +418,6 @@ class Bullet(Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
         self.pos = vec(self.x, self.y)
-        # self.movey = movey
-        # self.movex = movex
         self.velocity = 10
         self.side = side
         self.timer = 0
@@ -430,19 +429,18 @@ class Bullet(Sprite):
     # collisions of bullet with enemy/player/boss and movement
     def update(self):
         global SCORE, player_bullets, snake_segments, index
-        # self.rect.y += self.movey
-        # self.rect.x += self.movex
-        
+
+        # angling bullets
         angle = math.radians(self.angle)
         self.velocity.x = math.cos(angle) * self.speed
         self.velocity.y = math.sin(angle) * self.speed
         
+        # updates bullet movement every set amount of seconds
         timedelta = time.time() - self.last_update_time
         self.last_update_time = time.time()
         self.pos += self.velocity * timedelta
         self.rect.center = self.pos
-        # self.pos += self.vel
-        # self.rect.center = self.pos
+
         
         # player bullets
         if self.side == "player":
@@ -451,6 +449,7 @@ class Bullet(Sprite):
                 SCORE += 1
                 self.kill()
                 player_bullets -= 1
+                # subracts from snake len on hit
                 snake_segments[len(snake_segments) - 1].kill()
                 snake_segments.remove(snake_segments[len(snake_segments) - 1])
                 index -= 1
@@ -484,28 +483,24 @@ class Player(Sprite):
         if keys[pg.K_a]:
             if FRAME % PLAYER_SPEED == 0:
                 self.rect.x -= 20
-            # self.acc.x = -1
-            # print(self.vel)
         if keys[pg.K_d]:
             if FRAME % PLAYER_SPEED == 0:
                 self.rect.x += 20
-            # self.acc.x = 1
         if keys[pg.K_w]:
             if FRAME % PLAYER_SPEED == 0:
                 self.rect.y -= 20
-            # self.acc.y = -1
-            # print(self.vel)
         if keys[pg.K_s]:
             if FRAME % PLAYER_SPEED == 0:
                 self.rect.y += 20
-            # self.acc.y = 1  
         
     # shoot function creates a bullet at player coordinates
     def shoot(self):
         global player_bullets, mx, my
         x = self.rect.x + 10
         y = self.rect.y + 10
+        # calculates angle to fire bullet at mouse pointer using arctangent
         angle = math.degrees(math.atan2((my - y), (mx - x)))
+        # bullet spread
         angle += random.randint(-BULLET_SPREAD, BULLET_SPREAD)/2
         e = Bullet(x, y, RED, 5, 5, angle, "player")
         all_sprites.add(e)
@@ -515,14 +510,8 @@ class Player(Sprite):
     def update(self):
         global LIVES
         
-        # self.acc = vec(0, 0)
         self.controls()
-        # self.acc.x += self.vel.x * -0.3
-        # self.acc.y += self.vel.y * -0.3
-        # self.vel += self.acc
-        # self.pos += self.vel + 0.5 * self.acc
-        # self.rect.midbottom = self.pos   
-        
+ 
         hits = pg.sprite.spritecollide(self, snake, False)
         if hits:
             self.kill() 
@@ -573,6 +562,7 @@ class Apple(Sprite):
                 apple_list.remove(self)
                 self.kill()
         
+        # makes sure apples dont spawn in walls
         hits1 = pg.sprite.spritecollide(self, walls, False)
         if hits1:
             apple_list.remove(self)
@@ -673,7 +663,7 @@ if MULTIPLAYER == True:
     snake_segments2.append(snake_head2)
 
 
- 
+# wall spawining math
 if WALLS == True:  
     for i in range(AMOUNT_WALLS): 
         x = random.randint(1, WIDTH/20 - 2) * 20 + 10
@@ -707,13 +697,13 @@ while running:
         # check for closed window
         if event.type == pg.QUIT:
             running = False
-        
+    # rapid fire and normal shoot settings   
         if RAPID_FIRE == False:
             if event.type == pg.MOUSEBUTTONUP:
                 mx, my = pg.mouse.get_pos()
                 player.shoot()
                 print(mx, my)
-         
+    
     if RAPID_FIRE == True:
         if FRAME % PLAYER_FIRERATE == 0:   
             if pg.mouse.get_pressed()[0]:
@@ -830,6 +820,7 @@ while running:
         if win != True:
             all_sprites.update()
     
+    # debug mode (draws snake targeting line and indexes apples)
     if DEBUG == True:        
         try:
             if prioritize == False:
