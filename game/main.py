@@ -6,6 +6,7 @@
 # https://stackoverflow.com/questions/715417/converting-from-a-string-to-boolean-in-python
 # https://www.geeksforgeeks.org/enumerate-in-python/
 # https://www.w3schools.com/python/ref_string_isnumeric.asp
+# https://www.geeksforgeeks.org/how-to-close-a-window-in-tkinter/
 '''
 My final project is the snake game with multiplayer and walls, and player vs snake mode
 '''
