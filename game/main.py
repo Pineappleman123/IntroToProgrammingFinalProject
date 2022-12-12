@@ -84,6 +84,9 @@ def update_settings():
 # create a button for updating the settings
 button = tk.Button(root, text="Update Settings", command=update_settings)
 button.pack()
+# create a button for updating the settings
+button1 = tk.Button(root, text="Cancel", command=root.destroy)
+button1.pack()
 
 # start the Tkinter event loop
 root.mainloop()
