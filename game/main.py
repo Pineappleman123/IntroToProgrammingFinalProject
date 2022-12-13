@@ -90,6 +90,8 @@ def update_settings():
 # create a button for updating the settings
 button = tk.Button(root, text="Update Settings", command=update_settings)
 button.pack()
+# game instructions
+label = tk.Label(root, text="Main gamemodes: PVE, Multiplayer, Singleplayer. \nTo play PVE(player vs snake use mouse to shoot) set to True, and make Multiplayer False. \nTo play Multiplayer set to True and make PVE False. \nTo play Singleplayer set Multiplayer and PVE to False. \nWhen playing Multiplayer or PVE make sure 'AI' is False").pack()
 # create a button for canceling updating the settings
 button1 = tk.Button(root, text="Cancel", command=root.destroy)
 button1.pack()
@@ -171,7 +173,7 @@ class Snake_Segment(Sprite):
         self.next_direction = ""
         self.change_direction = False
         self.no_update = False
-        self.ai = True
+        self.ai = AI
         self.x = x
         self.y = y
         self.player = player
