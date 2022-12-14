@@ -360,9 +360,12 @@ class Snake_Segment(Sprite):
                     # this statement checks if the snake segment in front of the current one has changed direction
                     # next_direction queues the direction of the snake segment in front of the current one but does not change direction just yet so that the current segment can catch up with the one in front of it and not cause gaps
                     # this block then allows change_direction to be true so that in the next update the segment can change direction
-                    if self.direction != snake_segments[self.index - 1].direction:
-                        self.next_direction = snake_segments[self.index - 1].direction
-                        self.change_direction = True
+                    try:
+                        if self.direction != snake_segments[self.index - 1].direction:
+                            self.next_direction = snake_segments[self.index - 1].direction
+                            self.change_direction = True
+                    except:
+                        pass
                 # this is just code to actually move the segment in the right direction by its width/hight(which is 20)
                 if self.direction == "left":                
                     self.rect.x -= 20
