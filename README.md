@@ -39,10 +39,10 @@ Andrew Perevoztchikov
 ## Version History
 * 0.3
     * Final Features
-    * See [commit change]() or See [release history]()
+    * See [commit change](https://github.com/Pineappleman123/IntroToProgrammingFinalProject/commits/main)
 * 0.2
     * New Features
-    * See [commit change]() or See [release history]()
+    * See [commit change](https://github.com/Pineappleman123/IntroToProgrammingFinalProject/commits/main)
 * 0.1
     * Initial Release
 
