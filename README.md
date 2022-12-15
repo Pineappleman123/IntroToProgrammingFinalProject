@@ -5,7 +5,7 @@ Using pygame to make a snake game
 
 ## Description
 
-A top down 2d game with a controllable snake that eats apples. Includes multiplayer vs mode, player vs snake mode, and automatically controlled ai mode.
+A top down 2d game with a controllable snake that eats apples. Includes: singleplayer mode, multiplayer mode, player vs snake mode, and automatically controlled ai mode.
 
 ## Getting Started
 
@@ -25,25 +25,23 @@ A top down 2d game with a controllable snake that eats apples. Includes multipla
 * Open downloaded "game" folder in any code editor (recommended: VSCode https://code.visualstudio.com/download)
 * Open "main.py" in code editor
 * Click the button which is labeled "run file" in editor
-```
-code blocks for commands
-```
+
 
 ## Help
 
-* If there is an error along the lines of "This directory does not exist," double check that all filepaths in main.py lead to the correct folders
-```
-command to run if program contains helper info
-```
+* If there is an error along the lines of "This directory does not exist," double check that all filepaths in main.py lead to the correct folders or files
+
 
 ## Authors
 
 Andrew Perevoztchikov 
 
 ## Version History
-
+* 0.3
+    * Final Features
+    * See [commit change]() or See [release history]()
 * 0.2
-    * Various bug fixes and optimizations
+    * New Features
     * See [commit change]() or See [release history]()
 * 0.1
     * Initial Release
@@ -55,7 +53,12 @@ This project is licensed under the MIT License - see the LICENSE.md file for det
 ## Acknowledgments
 
 Inspiration, code snippets, etc.
-* [w3Schools](https://www.w3schools.com/python/default.asp)
+* [w3Schools](https://www.w3schools.com/python/default.asp)(https://www.w3schools.com/python/ref_string_isnumeric.asp)
 * [PyGame](https://www.pygame.org/docs/)
 * [Automate The Boring Stuff](https://automatetheboringstuff.com/)
 * [Kids Can Code](https://kidscancode.org/blog)
+* [Geeks For Geeks](https://www.geeksforgeeks.org/exec-in-python/)(https://www.geeksforgeeks.org/enumerate-in-python/)(https://www.geeksforgeeks.org/how-to-close-a-window-in-tkinter/)
+* [Tutorialspoint](https://www.tutorialspoint.com/determine-which-button-was-pressed-in-tkinter)
+* [Stack Overflow](https://stackoverflow.com/questions/715417/converting-from-a-string-to-boolean-in-python)
+
+
