@@ -53,12 +53,12 @@ This project is licensed under the MIT License - see the LICENSE.md file for det
 ## Acknowledgments
 
 Inspiration, code snippets, etc.
-* [w3Schools](https://www.w3schools.com/python/default.asp)(https://www.w3schools.com/python/ref_string_isnumeric.asp)
+* [w3Schools](https://www.w3schools.com/python/default.asp)
 * [PyGame](https://www.pygame.org/docs/)
 * [Automate The Boring Stuff](https://automatetheboringstuff.com/)
 * [Kids Can Code](https://kidscancode.org/blog)
-* [Geeks For Geeks](https://www.geeksforgeeks.org/exec-in-python/)(https://www.geeksforgeeks.org/enumerate-in-python/)(https://www.geeksforgeeks.org/how-to-close-a-window-in-tkinter/)
-* [Tutorialspoint](https://www.tutorialspoint.com/determine-which-button-was-pressed-in-tkinter)
-* [Stack Overflow](https://stackoverflow.com/questions/715417/converting-from-a-string-to-boolean-in-python)
+* [Geeks For Geeks](https://www.geeksforgeeks.org/)
+* [Tutorialspoint](https://www.tutorialspoint.com/)
+* [Stack Overflow](https://stackoverflow.com/)
 
 
